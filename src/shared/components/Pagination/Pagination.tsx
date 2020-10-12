@@ -4,7 +4,7 @@ import { css } from "office-ui-fabric-react/lib/Utilities";
 import * as React from "react";
 import { IPaginationProps } from ".";
 import styles from "./Pagination.module.scss";
-import * as strings from "CalendarFeedSummaryWebPartStrings";
+import * as strings from "CalendarFeedWebPartStrings";
 import { useCallback } from 'react';
 
 /**

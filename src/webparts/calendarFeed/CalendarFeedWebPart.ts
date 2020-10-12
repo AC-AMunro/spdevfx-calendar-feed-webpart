@@ -21,28 +21,27 @@ import { PropertyFieldTextWithCallout } from "@pnp/spfx-property-controls/lib/Pr
 import { PropertyFieldToggleWithCallout } from "@pnp/spfx-property-controls/lib/PropertyFieldToggleWithCallout";
 
 // Localization
-import * as strings from "CalendarFeedSummaryWebPartStrings";
+import * as strings from "CalendarFeedWebPartStrings";
 
 // Calendar services
 import { CalendarEventRange, DateRange, ICalendarService } from "../../shared/services/CalendarService";
 import { CalendarServiceProviderList, CalendarServiceProviderType } from "../../shared/services/CalendarService/CalendarServiceProviderList";
 
 // Web part properties
-import { ICalendarFeedSummaryWebPartProps } from "./CalendarFeedSummaryWebPart.types";
+import { ICalendarFeedWebPartProps } from "./CalendarFeedWebPart.types";
 
-// Calendar Feed Summary component
-import CalendarFeedSummary from "./components/CalendarFeedSummary";
-import { ICalendarFeedSummaryProps } from "./components/CalendarFeedSummary.types";
+// Calendar Feed component
+import CalendarFeed from "./components/CalendarFeed";
+import { ICalendarFeedProps } from "./components/CalendarFeed.types";
 
 // Support for theme variants
 import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme, ISemanticColors } from '@microsoft/sp-component-base';
 
 /**
- * Calendar Feed Summary Web Part
- * This web part shows a summary of events, in a film-strip (for normal views) or list view (for narrow views)
- * It is called a summary web part because it doesn't allow the user to filter events.
+ * Calendar Feed Web Part
+ * This web part shows a calendar of events, in a film-strip (for normal views) or list view (for narrow views)
  */
-export default class CalendarFeedSummaryWebPart extends BaseClientSideWebPart<ICalendarFeedSummaryWebPartProps> {
+export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendarFeedWebPartProps> {
   // the list of proviers available
   private _providerList: any[];
 
@@ -103,9 +102,9 @@ export default class CalendarFeedSummaryWebPart extends BaseClientSideWebPart<IC
     // We pass the width so that the components can resize
     const { clientWidth } = this.domElement;
 
-    // display the summary (or the configuration screen)
-    const element: React.ReactElement<ICalendarFeedSummaryProps> = React.createElement(
-      CalendarFeedSummary,
+    // display the calendar (or the configuration screen)
+    const element: React.ReactElement<ICalendarFeedProps> = React.createElement(
+      CalendarFeed,
       {
         title: this.properties.title,
         displayMode: this.displayMode,

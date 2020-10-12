@@ -1,29 +1,29 @@
 import { DisplayMode } from "@microsoft/sp-core-library";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
-import * as strings from "CalendarFeedSummaryWebPartStrings";
+import * as strings from "CalendarFeedWebPartStrings";
 import * as moment from "moment";
 import { FocusZone, FocusZoneDirection, List, Spinner, css } from "office-ui-fabric-react";
 import * as React from "react";
 import { EventCard } from "../../../shared/components/EventCard";
 import { Pagination } from "../../../shared/components/Pagination";
 import { CalendarServiceProviderType, ICalendarEvent, ICalendarService } from "../../../shared/services/CalendarService";
-import styles from "./CalendarFeedSummary.module.scss";
-import { ICalendarFeedSummaryProps, ICalendarFeedSummaryState, IFeedCache } from "./CalendarFeedSummary.types";
+import styles from "./CalendarFeed.module.scss";
+import { ICalendarFeedProps, ICalendarFeedState, IFeedCache } from "./CalendarFeed.types";
 import { FilmstripLayout } from "../../../shared/components/filmstripLayout/index";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 // the key used when caching events
-const CacheKey: string = "calendarFeedSummary";
+const CacheKey: string = "calendarFeed";
 
 // this is the same width that the SharePoint events web parts use to render as narrow
 const MaxMobileWidth: number = 480;
 
 /**
- * Displays a feed summary from a given calendar feed provider. Renders a different view for mobile/narrow web parts.
+ * Displays a feed from a given calendar feed provider. Renders a different view for mobile/narrow web parts.
  */
-export default class CalendarFeedSummary extends React.Component<ICalendarFeedSummaryProps, ICalendarFeedSummaryState> {
-  constructor(props: ICalendarFeedSummaryProps) {
+export default class CalendarFeed extends React.Component<ICalendarFeedProps, ICalendarFeedState> {
+  constructor(props: ICalendarFeedProps) {
     super(props);
     this.state = {
       isLoading: false,
@@ -47,7 +47,7 @@ export default class CalendarFeedSummary extends React.Component<ICalendarFeedSu
    * @param prevProps The previous props before changes are applied
    * @param prevState The previous state before changes are applied
    */
-  public componentDidUpdate(prevProps: ICalendarFeedSummaryProps, prevState: ICalendarFeedSummaryState): void {
+  public componentDidUpdate(prevProps: ICalendarFeedProps, prevState: ICalendarFeedState): void {
     // only reload if the provider info has changed
     const prevProvider: ICalendarService = prevProps.provider;
     const currProvider: ICalendarService = this.props.provider;
@@ -88,7 +88,7 @@ export default class CalendarFeedSummary extends React.Component<ICalendarFeedSu
    * 2. Web part is configured and we're loading events, or
    * 3. Web part is configured and events are loaded
    */
-  public render(): React.ReactElement<ICalendarFeedSummaryProps> {
+  public render(): React.ReactElement<ICalendarFeedProps> {
     const {
       isConfigured,
     } = this.props;
@@ -109,7 +109,7 @@ export default class CalendarFeedSummary extends React.Component<ICalendarFeedSu
 
     // put everything together in a nice little calendar view
     return (
-      <div className={css(styles.calendarFeedSummary, styles.webPartChrome)} style={{ backgroundColor: semanticColors.bodyBackground }}>
+      <div className={css(styles.calendarFeed, styles.webPartChrome)} style={{ backgroundColor: semanticColors.bodyBackground }}>
         <div className={css(styles.webPartHeader, styles.headerSmMargin)}>
           <WebPartTitle displayMode={this.props.displayMode}
             title={this.props.title}

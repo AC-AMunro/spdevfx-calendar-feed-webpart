@@ -1,4 +1,4 @@
-declare interface ICalendarFeedSummaryWebPartStrings {
+declare interface ICalendarFeedWebPartStrings {
   UseCorsFieldDescription: string;
   ConvertFromUTCFieldDescription: string;
   ConvertFromUTCOptionNo: string;
@@ -64,7 +64,7 @@ declare interface ICalendarFeedSummaryWebPartStrings {
   FeedSettingsGroupName: string;
 }
 
-declare module 'CalendarFeedSummaryWebPartStrings' {
-  const strings: ICalendarFeedSummaryWebPartStrings;
+declare module 'CalendarFeedWebPartStrings' {
+  const strings: ICalendarFeedWebPartStrings;
   export = strings;
 }

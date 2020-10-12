@@ -3,7 +3,7 @@ import { DateRange, CalendarServiceProviderType } from "../../shared/services/Ca
 /**
  * Web part properties stored in web part configuration
  */
-export interface ICalendarFeedSummaryWebPartProps {
+export interface ICalendarFeedWebPartProps {
   /**
    * The title of the web part
    */

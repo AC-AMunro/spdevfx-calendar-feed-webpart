@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "acef6c3f-852a-42e3-8a4b-7ea191ae9687",
-  "alias": "CalendarFeedSummaryWebPart",
+  "id": "f50a42db-fe12-4ad3-bf89-aa1befede813",
+  "alias": "CalendarFeedWebPart",
   "componentType": "WebPart",
   "supportsThemeVariants": true,
   "version": "*",
@@ -15,10 +15,10 @@
         "default": "Text, media and content"
       },
       "title": {
-        "default": "Calendar Feed Summary"
+        "default": "Calendar Feed"
       },
       "description": {
-        "default": "Shows a summary view of a list of calendar events retrieved from an external feed."
+        "default": "Shows a calendar view of a list of calendar events retrieved from an external feed."
       },
       "officeFabricIconFontName": "Calendar",
       "properties": {

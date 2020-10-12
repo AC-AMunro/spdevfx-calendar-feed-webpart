@@ -1,5 +1,5 @@
 import { Guid } from "@microsoft/sp-core-library";
-import * as strings from "CalendarFeedSummaryWebPartStrings";
+import * as strings from "CalendarFeedWebPartStrings";
 import * as ICS from "ics-js";
 import * as moment from "moment";
 import { ActionButton, DocumentCard, DocumentCardType, FocusZone, css } from "office-ui-fabric-react";

@@ -13,7 +13,7 @@ define([], function() {
     FeedUrlFieldLabel: "Feed URL",
     FeedTypeFieldLabel: "Feed type",
     PlaceholderTitle: "Configure event feed",
-    PlaceholderDescription: "To display a summary of events, you need to select a feed type and configure the event feed URL.",
+    PlaceholderDescription: "To display a calendar of events, you need to select a feed type and configure the event feed URL.",
     ConfigureButton: "Configure",
     FeedTypeOptionGoogle: "Google Calendar",
     FeedTypeOptioniCal: "iCal",

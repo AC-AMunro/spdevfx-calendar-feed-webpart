@@ -1,5 +1,5 @@
 /**
- * CalendarFeedSummary Types
+ * CalendarFeed Types
  * Contains the various types used by the component.
  * (I like to  keep my props and state in a separate ".types"
  * file because that's what the Office UI Fabric team does and
@@ -12,9 +12,9 @@ import { ICalendarEvent, ICalendarService } from "../../../shared/services/Calen
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 /**
- * The props for the calendar feed summary component
+ * The props for the calendar feed component
  */
-export interface ICalendarFeedSummaryProps {
+export interface ICalendarFeedProps {
   title: string;
   displayMode: DisplayMode;
   context: IWebPartContext;
@@ -27,9 +27,9 @@ export interface ICalendarFeedSummaryProps {
 }
 
 /**
- * The state for the calendar feed summary component
+ * The state for the calendar feed component
  */
-export interface ICalendarFeedSummaryState {
+export interface ICalendarFeedState {
   events: ICalendarEvent[];
   error: any|undefined;
   isLoading: boolean;
