@@ -61,6 +61,14 @@ define([], function() {
     AddToCalendarButtonLabel: "Add to my calendar",
     AllDayDateFormat: "dddd, MMMM Do YYYY",
     LocalizedTimeFormat: "llll",
-    FeedSettingsGroupName: "Calendar feed"
+    FeedSettingsGroupName: "Calendar feed",
+    WeekLabel: "Week",
+    DayLabel: "Day",
+    MonthLabel: "Month",
+    TodayLabel: "Today",
+    PreviousLabel: "Previous",
+    NextLabel: "Next",
+    ShowMore: "more",
+    EventOwnerLabel: "event owner"
   }
 });

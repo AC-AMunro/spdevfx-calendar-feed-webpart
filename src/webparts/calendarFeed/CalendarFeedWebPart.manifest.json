@@ -22,7 +22,7 @@
       },
       "officeFabricIconFontName": "Calendar",
       "properties": {
-        "title": "Upcoming Events",
+        "title": "Events Calendar",
         "dateRange": 4,
         "maxEvents": 4,
         "useCORS": false,

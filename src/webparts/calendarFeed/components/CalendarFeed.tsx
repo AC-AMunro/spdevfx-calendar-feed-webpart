@@ -2,8 +2,15 @@ import { DisplayMode } from "@microsoft/sp-core-library";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
 import * as strings from "CalendarFeedWebPartStrings";
+import BigCalendar from 'react-big-calendar';
 import * as moment from "moment";
-import { FocusZone, FocusZoneDirection, List, Spinner, css } from "office-ui-fabric-react";
+import {
+  FocusZone, FocusZoneDirection, List, Spinner, css,
+  Icon,
+  DocumentCard, DocumentCardTitle, IDocumentCardPreviewProps, DocumentCardPreview, DocumentCardDetails, DocumentCardActivity,
+  IPersonaSharedProps, Persona, PersonaSize, PersonaPresence,
+  HoverCard, HoverCardType
+} from "office-ui-fabric-react";
 import * as React from "react";
 import { EventCard } from "../../../shared/components/EventCard";
 import { Pagination } from "../../../shared/components/Pagination";
@@ -18,6 +25,8 @@ const CacheKey: string = "calendarFeed";
 
 // this is the same width that the SharePoint events web parts use to render as narrow
 const MaxMobileWidth: number = 480;
+
+const localizer = BigCalendar.momentLocalizer(moment);
 
 /**
  * Displays a feed from a given calendar feed provider. Renders a different view for mobile/narrow web parts.
@@ -117,8 +126,155 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
           />
         </div>
         <div className={styles.content}>
-          {this._renderContent()}
+          <BigCalendar
+            dayPropGetter = {this.dayPropGetter}
+            localizer={localizer}
+            selectable
+            events={this.state.events}
+            startAccessor="start"
+            endAccessor="end"
+            eventPropGetter={this.eventStyleGetter}
+            components={{
+              event: this.renderEvent
+
+            }}
+            defaultDate={moment().startOf('day').toDate()}
+            messages={
+              {
+                'today': strings.TodayLabel,
+                'previous': strings.PreviousLabel,
+                'next': strings.NextLabel,
+                'month': strings.MonthLabel,
+                'week': strings.WeekLabel,
+                'day': strings.DayLabel,
+                'showMore': total => `+${total} ${strings.ShowMore}`
+              }
+            }
+          />
         </div>
+      </div>
+    );
+  }
+
+  /**
+   *
+   * @param {*} date
+   * @memberof Calendar
+   */
+  public dayPropGetter(date: Date) {
+    return {
+        className: styles.dayPropGetter
+    };
+  }
+
+  /**
+   *
+   * @param {*} event
+   * @param {*} start
+   * @param {*} end
+   * @param {*} isSelected
+   * @returns {*}
+   * @memberof Calendar
+   */
+  public eventStyleGetter(event, start, end, isSelected): any {
+
+    let style: any = {
+      backgroundColor: 'white',
+      borderRadius: '0px',
+      opacity: 1,
+      color: event.color,
+      borderWidth: '1.1px',
+      borderStyle: 'solid',
+      borderColor: event.color,
+      borderLeftWidth: '6px',
+      display: 'block'
+    };
+
+    return {
+      style: style
+    };
+  }
+
+  /**
+   * @private
+   * @param {*} { event }
+   * @returns
+   * @memberof Calendar
+   */
+  private renderEvent({ event }) {
+
+    const previewEventIcon: IDocumentCardPreviewProps = {
+      previewImages: [
+        {
+          // previewImageSrc: event.ownerPhoto,
+          previewIconProps: { iconName: event.fRecurrence === '0' ? 'Calendar': 'RecurringEvent', styles: { root: { color: event.color } }, className: styles.previewEventIcon },
+          height: 43,
+        }
+      ]
+    };
+    const EventInfo: IPersonaSharedProps = {
+      imageInitials: event.ownerInitial,
+      imageUrl: event.ownerPhoto,
+      text: event.title
+    };
+
+    /**
+     * @returns {JSX.Element}
+     */
+    const onRenderPlainCard = (): JSX.Element => {
+      return (
+        <div className={styles.plainCard}>
+          <DocumentCard className={styles.Documentcard}   >
+            <div>
+              <DocumentCardPreview {...previewEventIcon} />
+            </div>
+            <DocumentCardDetails>
+              <div className={styles.DocumentCardDetails}>
+                <DocumentCardTitle title={event.title} shouldTruncate={true} className={styles.DocumentCardTitle} styles={{ root: { color: event.color} }} />
+              </div>
+              {
+                moment(event.EventDate).format('YYYY/MM/DD') !== moment(event.EndDate).format('YYYY/MM/DD') ?
+                  <span className={styles.DocumentCardTitleTime}>{moment(event.EventDate).format('dddd')} - {moment(event.EndDate).format('dddd')} </span>
+                  :
+                  <span className={styles.DocumentCardTitleTime}>{moment(event.EventDate).format('dddd')} </span>
+              }
+              <span className={styles.DocumentCardTitleTime}>{moment(event.EventDate).format('HH:mm')}H - {moment(event.EndDate).format('HH:mm')}H</span>
+              <Icon iconName='MapPin' className={styles.locationIcon} style={{ color: event.color }} />
+              <DocumentCardTitle
+                title={`${event.location}`}
+                shouldTruncate={true}
+                showAsSecondaryTitle={true}
+                className={styles.location}
+              />
+              <div style={{ marginTop: 20 }}>
+                <DocumentCardActivity
+                  activity={strings.EventOwnerLabel}
+                  people={[{ name: event.ownerName, profileImageSrc: event.ownerPhoto, initialsColor:event.color}]}
+                />
+              </div>
+            </DocumentCardDetails>
+          </DocumentCard>
+        </div>
+      );
+    };
+
+    return (
+      <div style={{ height: 22 }}>
+        <HoverCard
+          cardDismissDelay={1000}
+          type={HoverCardType.plain}
+          plainCardProps={{ onRenderPlainCard: onRenderPlainCard }}
+          onCardHide={(): void => {
+          }}
+        >
+          <Persona
+            {...EventInfo}
+            size={PersonaSize.size24}
+            presence={PersonaPresence.none}
+            coinSize={22}
+            initialsColor={event.color}
+          />
+        </HoverCard>
       </div>
     );
   }

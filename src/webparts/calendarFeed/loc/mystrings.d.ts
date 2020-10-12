@@ -62,6 +62,14 @@ declare interface ICalendarFeedWebPartStrings {
   AllDayDateFormat: string;
   LocalizedTimeFormat: string;
   FeedSettingsGroupName: string;
+  TodayLabel: string;
+  PreviousLabel: string;
+  NextLabel: string;
+  MonthLabel: string;
+  WeekLabel: string;
+  DayLabel: string;
+  ShowMore: string;
+  EventOwnerLabel: string;
 }
 
 declare module 'CalendarFeedWebPartStrings' {
