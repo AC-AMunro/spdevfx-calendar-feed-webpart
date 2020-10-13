@@ -1,12 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
-    "name": "avcol-calendar-feed-calendar",
+    "name": "external-calendar-feed",
+    "title": "External Calendar",
     "id": "5b228147-70ca-43fa-9dce-f6de786e0ba3",
-    "version": "1.0.0.0",
+    "version": "1.0.0.1",
     "includeClientSideAssets": true
   },
   "paths": {
-    "zippedPackage": "solution/avcol-calendar-feed.sppkg"
+    "zippedPackage": "solution/external-calendar-feed.sppkg"
   }
 }

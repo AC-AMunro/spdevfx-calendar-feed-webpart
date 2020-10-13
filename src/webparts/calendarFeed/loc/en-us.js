@@ -20,8 +20,6 @@ define([], function() {
     FeedTypeOptionRSS: "RSS Calendar",
     FeedTypeOptionWordPress: "WordPress WP_FullCalendar",
     FeedUrlCallout: "If your feed supports date range parameters, use {s} and {e} for start and end dates, and we'll replace them with date values.",
-    MaxEventsFieldLabel: "Narrow page length",
-    MaxEventsFieldDescription: "Indicates the number of events to show per page when displaying a narrow list. Use 0 for no maximum",
     DateRangeFieldLabel: "Date range",
     DateRangeOptionUpcoming: "Next year",
     DateRangeOptionWeek: "Next week",

@@ -127,6 +127,7 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
    * We're disabling reactive property panes here because we don't want the web part to try to update events as
    * people are typing in the feed URL.
    */
+  // @ts-ignore
   protected get disableReactivePropertyChanges(): boolean {
     // require an apply button on the property pane
     return true;
@@ -241,15 +242,6 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
                   showValue: true,
                   value: cacheDuration
                 }),
-                // how many items are we diplaying in a page
-                PropertyFieldNumber("maxEvents", {
-                  key: "maxEventsFieldId",
-                  label: strings.MaxEventsFieldLabel,
-                  description: strings.MaxEventsFieldDescription,
-                  value: maxEvents,
-                  minValue: 0,
-                  disabled: false
-                }),
                 PropertyFieldNumber("maxTotal", {
                   key: "maxTotalFieldId",
                   label: strings.MaxTotalFieldLabel,
@@ -277,6 +269,7 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
   /**
      * Returns the data version
      */
+  // @ts-ignore
   protected get dataVersion(): Version {
     return Version.parse('2.0');
   }

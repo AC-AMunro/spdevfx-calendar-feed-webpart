@@ -20,8 +20,6 @@ declare interface ICalendarFeedWebPartStrings {
   FeedTypeOptionRSS: string;
   FeedTypeOptionWordPress: string;
   FeedUrlCallout: string;
-  MaxEventsFieldLabel: string;
-  MaxEventsFieldDescription: string;
   DateRangeFieldLabel: string;
   DateRangeOptionUpcoming: string;
   DateRangeOptionWeek: string;
