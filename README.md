@@ -1,5 +1,12 @@
 # React Calendar Feed Web Part
 
+## Origins
+
+This web part is an amalgamation of the two sample web parts on the pnp/sp-dev-fx-webparts repository
+
+https://github.com/pnp/sp-dev-fx-webparts/tree/master/samples/react-calendar-feed
+https://github.com/pnp/sp-dev-fx-webparts/tree/master/samples/react-calendar
+
 ## Summary
 
 This web part uses event feeds from various sources and renders events using a look and feel that is consistent with the SharePoint out-of-the-box Group calendar/events web part.
@@ -12,11 +19,7 @@ It supports the following types of feeds:
 - Exchange Public Calendar
 - SharePoint
 
-![The web part in action](./assets/react-calendar-feed-demo.gif)
-
 The web part was designed to allow other calendar feed types (or any other type of data you'd like to show as events). If you have additional feeds that you'd like to support, please contact the author or submit a pull request.
-
-Like the SharePoint event web parts, this web part renders a film-strip view when placed on a single column page, and renders a list view when placed in narrow column (e.g.: 3 column layout), or when viewed on a mobile device.
 
 To improve performance, the web part caches the events to the user's local storage (so that it doesn't retrieve the events every time the user visits the page). You can turn off the cache by setting the cache duration to 0 minutes.
 
@@ -50,18 +53,13 @@ Solution|Author(s)
 --------|---------
 react-calendar-feed | Hugo Bernier ([Tahoe Ninjas](http://tahoeninjas.blog), @bernierh)
 react-calendar-feed | Peter Paul Kirschner ([@petkir_at](https://twitter.com/petkir_at))
+spdevfx-calendar-feed | Anthony Munro
 
 ## Version history
 
 Version|Date|Comments
 -------|----|--------
-1.0|May 15, 2018|Initial release
-2.0|June 25, 2018|Converted to SPFx 1.5 and added Exchange Public Calendar support
-3.0|November 9, 2018|Converted to SPFx 1.7; Added SharePoint Calendar feed
-4.0|January 16, 2019|Converted to SPFx 1.7.1; Removed NPM libraries associated with issue #708.
-5.0|August 17, 2019|Converted to SPFx 1.9.1; Refreshed carousel code; Addresses #735, #909. Also added **Convert from UTC** option to handle feeds which do not provide time zone information.
-5.1|April 16, 2020|Converted to SPFx 1.10.0; Fixed issue with UTC mode when in narrow view. Updated resizing behavior and styles to match OOB calendar view. Added support for themes and theme variants.
-5.2|July 15, 2020|Fixed issue to support IE11
+1.0|October 13, 2020|Initial release
 
 ## Disclaimer
 
@@ -99,5 +97,3 @@ This Web Part illustrates the following concepts on top of the SharePoint Framew
 - Creating extensible services
 - Using a proxy to resolve CORS issues
 - Retrieving SharePoint events from a list with a filter
-
-<img src="https://telemetry.sharepointpnp.com/sp-dev-fx-webparts/samples/react-calendar-feed" />

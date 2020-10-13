@@ -49,5 +49,53 @@ if (needIESupport) {
   process.stdout.write(`No IE11 Support is set \n`);
 }
 
+/**
+ * Webpack Bundle Anlayzer
+ * Reference and gulp task
+ */
+const bundleAnalyzer = require('webpack-bundle-analyzer');
+
+build.configureWebpack.mergeConfig({
+
+    additionalConfiguration: (generatedConfiguration) => {
+        const lastDirName = path.basename(__dirname);
+        const dropPath = path.join(__dirname, 'temp', 'stats');
+        generatedConfiguration.plugins.push(new bundleAnalyzer.BundleAnalyzerPlugin({
+            openAnalyzer: false,
+            analyzerMode: 'static',
+            reportFilename: path.join(dropPath, `${lastDirName}.stats.html`),
+            generateStatsFile: true,
+            statsFilename: path.join(dropPath, `${lastDirName}.stats.json`),
+            logLevel: 'error'
+        }));
+
+        return generatedConfiguration;
+    }
+
+});
+
+/**
+ * StyleLinter configuration
+ * Reference and custom gulp task
+ */
+const stylelint = require('gulp-stylelint');
+
+/* Stylelinter sub task */
+let styleLintSubTask = build.subTask('stylelint', (gulp) => {
+
+    return gulp
+        .src('src/**/*.scss')
+        .pipe(stylelint({
+            failAfterError: false,
+            reporters: [{
+                formatter: 'string',
+                console: true
+            }]
+        }));
+});
+/* end sub task */
+
+build.rig.addPreBuildTask(styleLintSubTask);
 
 build.initialize(gulp);
+build.sass.setConfig({ warnOnNonCSSModules: false, useCssModules:true});

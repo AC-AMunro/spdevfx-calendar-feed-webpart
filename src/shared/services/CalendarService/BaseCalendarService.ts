@@ -1,5 +1,5 @@
 import { HttpClient, HttpClientResponse } from "@microsoft/sp-http";
-import { IWebPartContext } from "@microsoft/sp-webpart-base";
+import { WebPartContext } from "@microsoft/sp-webpart-base";
 import * as moment from "moment";
 import { CalendarEventRange } from ".";
 import { ICalendarEvent } from "./ICalendarEvent";
@@ -12,7 +12,7 @@ import { ICalendarService } from "./ICalendarService";
  * choose to do so. We won't judge.
  */
 export abstract class BaseCalendarService implements ICalendarService {
-  public Context: IWebPartContext;
+  public Context: WebPartContext;
   public FeedUrl: string;
   public EventRange: CalendarEventRange;
   public UseCORS: boolean;

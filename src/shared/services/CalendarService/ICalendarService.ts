@@ -1,8 +1,8 @@
-import { IWebPartContext } from "@microsoft/sp-webpart-base";
+import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { CalendarEventRange, ICalendarEvent } from ".";
 
 export interface ICalendarService {
-    Context: IWebPartContext;
+    Context: WebPartContext;
     FeedUrl: string;
     EventRange: CalendarEventRange;
     UseCORS: boolean;

@@ -2,7 +2,7 @@ import { DisplayMode } from "@microsoft/sp-core-library";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
 import * as strings from "CalendarFeedWebPartStrings";
-import BigCalendar from 'react-big-calendar';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
 import * as moment from "moment";
 import {
   FocusZone, FocusZoneDirection, List, Spinner, css,
@@ -12,13 +12,12 @@ import {
   HoverCard, HoverCardType
 } from "office-ui-fabric-react";
 import * as React from "react";
-import { EventCard } from "../../../shared/components/EventCard";
-import { Pagination } from "../../../shared/components/Pagination";
 import { CalendarServiceProviderType, ICalendarEvent, ICalendarService } from "../../../shared/services/CalendarService";
 import styles from "./CalendarFeed.module.scss";
 import { ICalendarFeedProps, ICalendarFeedState, IFeedCache } from "./CalendarFeed.types";
-import { FilmstripLayout } from "../../../shared/components/filmstripLayout/index";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+require('./calendar.css');
 
 // the key used when caching events
 const CacheKey: string = "calendarFeed";
@@ -26,7 +25,7 @@ const CacheKey: string = "calendarFeed";
 // this is the same width that the SharePoint events web parts use to render as narrow
 const MaxMobileWidth: number = 480;
 
-const localizer = BigCalendar.momentLocalizer(moment);
+const localizer = momentLocalizer(moment);
 
 /**
  * Displays a feed from a given calendar feed provider. Renders a different view for mobile/narrow web parts.
@@ -118,39 +117,15 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
 
     // put everything together in a nice little calendar view
     return (
-      <div className={css(styles.calendarFeed, styles.webPartChrome)} style={{ backgroundColor: semanticColors.bodyBackground }}>
+      <div className={css(styles.calendar, styles.webPartChrome)} style={{ backgroundColor: semanticColors.bodyBackground }}>
         <div className={css(styles.webPartHeader, styles.headerSmMargin)}>
           <WebPartTitle displayMode={this.props.displayMode}
             title={this.props.title}
             updateProperty={this.props.updateProperty}
           />
         </div>
-        <div className={styles.content}>
-          <BigCalendar
-            dayPropGetter = {this.dayPropGetter}
-            localizer={localizer}
-            selectable
-            events={this.state.events}
-            startAccessor="start"
-            endAccessor="end"
-            eventPropGetter={this.eventStyleGetter}
-            components={{
-              event: this.renderEvent
-
-            }}
-            defaultDate={moment().startOf('day').toDate()}
-            messages={
-              {
-                'today': strings.TodayLabel,
-                'previous': strings.PreviousLabel,
-                'next': strings.NextLabel,
-                'month': strings.MonthLabel,
-                'week': strings.WeekLabel,
-                'day': strings.DayLabel,
-                'showMore': total => `+${total} ${strings.ShowMore}`
-              }
-            }
-          />
+        <div className={styles.container}>
+          {this._renderContent()}
         </div>
       </div>
     );
@@ -207,15 +182,11 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
       previewImages: [
         {
           // previewImageSrc: event.ownerPhoto,
-          previewIconProps: { iconName: event.fRecurrence === '0' ? 'Calendar': 'RecurringEvent', styles: { root: { color: event.color } }, className: styles.previewEventIcon },
+          //previewIconProps: { iconName: event.fRecurrence === '0' ? 'Calendar': 'RecurringEvent', styles: { root: { color: event.color } }, className: styles.previewEventIcon },
+          previewIconProps: { iconName: 'Calendar', styles: { root: { color: event.color } }, className: styles.previewEventIcon },
           height: 43,
         }
       ]
-    };
-    const EventInfo: IPersonaSharedProps = {
-      imageInitials: event.ownerInitial,
-      imageUrl: event.ownerPhoto,
-      text: event.title
     };
 
     /**
@@ -233,25 +204,29 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
                 <DocumentCardTitle title={event.title} shouldTruncate={true} className={styles.DocumentCardTitle} styles={{ root: { color: event.color} }} />
               </div>
               {
-                moment(event.EventDate).format('YYYY/MM/DD') !== moment(event.EndDate).format('YYYY/MM/DD') ?
-                  <span className={styles.DocumentCardTitleTime}>{moment(event.EventDate).format('dddd')} - {moment(event.EndDate).format('dddd')} </span>
+                moment(event.start).format('YYYY/MM/DD') !== moment(event.end).format('YYYY/MM/DD') ?
+                  <span className={styles.DocumentCardTitleTime}>{moment(event.start).format('dddd')} - {moment(event.end).format('dddd')} </span>
                   :
-                  <span className={styles.DocumentCardTitleTime}>{moment(event.EventDate).format('dddd')} </span>
+                  <span className={styles.DocumentCardTitleTime}>{moment(event.start).format('dddd')} </span>
               }
-              <span className={styles.DocumentCardTitleTime}>{moment(event.EventDate).format('HH:mm')}H - {moment(event.EndDate).format('HH:mm')}H</span>
-              <Icon iconName='MapPin' className={styles.locationIcon} style={{ color: event.color }} />
+              <span className={styles.DocumentCardTitleTime}>{moment(event.start).format('h:mm A')} - {moment(event.end).format('h:mm A')}</span>
+              
+              { event.location != "" ? 
+              <Icon iconName='MapPin' className={styles.locationIcon} style={{ color: event.color }} /> && 
               <DocumentCardTitle
                 title={`${event.location}`}
                 shouldTruncate={true}
                 showAsSecondaryTitle={true}
                 className={styles.location}
-              />
-              <div style={{ marginTop: 20 }}>
-                <DocumentCardActivity
-                  activity={strings.EventOwnerLabel}
-                  people={[{ name: event.ownerName, profileImageSrc: event.ownerPhoto, initialsColor:event.color}]}
-                />
-              </div>
+              /> : "" }
+              { event.url != undefined && event.url != "" ?
+              <Icon iconName='MapPin' className={styles.locationIcon} style={{ color: event.color }} /> && 
+              <DocumentCardTitle
+                title={`${event.url}`}
+                shouldTruncate={true}
+                showAsSecondaryTitle={true}
+                className={styles.location}
+              /> : "" }
             </DocumentCardDetails>
           </DocumentCard>
         </div>
@@ -267,13 +242,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
           onCardHide={(): void => {
           }}
         >
-          <Persona
-            {...EventInfo}
-            size={PersonaSize.size24}
-            presence={PersonaPresence.none}
-            coinSize={22}
-            initialsColor={event.color}
-          />
+          {event.title}
         </HoverCard>
       </div>
     );
@@ -319,12 +288,31 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
       return (<div className={styles.emptyMessage}>{strings.NoEventsMessage}</div>);
     }
 
-    // we're loaded, no errors, and got some events
-    if (isNarrow) {
-      return this._renderNarrowList();
-    } else {
-      return this._renderNormalList();
-    }
+    return (<Calendar
+      dayPropGetter = {this.dayPropGetter}
+      localizer={localizer}
+      selectable
+      events={this.state.events}
+      startAccessor="start"
+      endAccessor="end"
+      eventPropGetter={this.eventStyleGetter}
+      components={{
+        event: this.renderEvent
+
+      }}
+      defaultDate={moment().startOf('day').toDate()}
+      messages={
+        {
+          'today': strings.TodayLabel,
+          'previous': strings.PreviousLabel,
+          'next': strings.NextLabel,
+          'month': strings.MonthLabel,
+          'week': strings.WeekLabel,
+          'day': strings.DayLabel,
+          'showMore': total => `+${total} ${strings.ShowMore}`
+        }
+      }
+    />);
   }
 
   /**
@@ -377,96 +365,6 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
     return (<div className={styles.errorMessage} >
       <div className={styles.moreDetails}>
         {errorMsg}
-      </div>
-    </div>);
-  }
-
-  /**
-   * Renders a narrow view of the calendar feed when the webpart is less than 480 pixels
-   */
-  private _renderNarrowList(): JSX.Element {
-    const {
-      events,
-      currentPage
-    } = this.state;
-
-    const { maxEvents } = this.props;
-
-    // if we're in edit mode, let's not make the events clickable
-    const isEditMode: boolean = this.props.displayMode === DisplayMode.Edit;
-
-    let pagedEvents: ICalendarEvent[] = events;
-    let usePaging: boolean = false;
-
-    if (maxEvents > 0 && events.length > maxEvents) {
-      // calculate the page size
-      const pageStartAt: number = maxEvents * (currentPage - 1);
-      const pageEndAt: number = (maxEvents * currentPage);
-
-      pagedEvents = events.slice(pageStartAt, pageEndAt);
-      usePaging = true;
-    }
-
-    return (<FocusZone
-      direction={FocusZoneDirection.vertical}
-      isCircularNavigation={false}
-      data-automation-id={"narrow-list"}
-      aria-label={isEditMode ? strings.FocusZoneAriaLabelEditMode : strings.FocusZoneAriaLabelReadMode}
-    >
-      <List
-        items={pagedEvents}
-        onRenderCell={(item, _index) => (
-          <EventCard
-            isEditMode={isEditMode}
-            event={item}
-            isNarrow={true}
-            themeVariant={this.props.themeVariant}
-          />
-        )} />
-      {usePaging &&
-        <Pagination
-          showPageNum={false}
-          currentPage={currentPage}
-          itemsCountPerPage={maxEvents}
-          totalItems={events.length}
-          onPageUpdate={this._onPageUpdate} />
-      }
-    </FocusZone>
-    );
-  }
-
-  private _onPageUpdate = (pageNumber: number): void => {
-    this.setState({
-      currentPage: pageNumber
-    });
-  }
-  /**
-   * Render a normal view for devices that are wider than 480
-   */
-  private _renderNormalList(): JSX.Element {
-    const {
-      events } = this.state;
-    const isEditMode: boolean = this.props.displayMode === DisplayMode.Edit;
-
-    return (<div>
-      <div>
-        <div role="application">
-          <FilmstripLayout
-            ariaLabel={strings.FilmStripAriaLabel}
-            clientWidth={this.props.clientWidth}
-            themeVariant={this.props.themeVariant}
-          >
-            {events.map((event: ICalendarEvent, index: number) => {
-              return (<EventCard
-                key={`eventCard${index}`}
-                isEditMode={isEditMode}
-                event={event}
-                isNarrow={false}
-                themeVariant={this.props.themeVariant} />
-              );
-            })}
-          </FilmstripLayout>
-        </div>
       </div>
     </div>);
   }
