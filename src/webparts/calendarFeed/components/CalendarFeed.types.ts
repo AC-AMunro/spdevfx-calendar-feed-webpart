@@ -6,7 +6,7 @@
  * I kinda liked it.
  */
 import { DisplayMode } from "@microsoft/sp-core-library";
-import { IWebPartContext } from "@microsoft/sp-webpart-base";
+import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { Moment } from "moment";
 import { ICalendarEvent, ICalendarService } from "../../../shared/services/CalendarService";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -17,11 +17,10 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 export interface ICalendarFeedProps {
   title: string;
   displayMode: DisplayMode;
-  context: IWebPartContext;
+  context: WebPartContext;
   updateProperty: (value: string) => void;
   isConfigured: boolean;
   provider: ICalendarService;
-  maxEvents: number;
   themeVariant: IReadonlyTheme;
   clientWidth: number;
 }

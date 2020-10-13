@@ -380,13 +380,15 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
    * Load events from the cache or, if expired, load from the event provider
    */
   private async _loadEvents(useCacheIfPossible: boolean): Promise<void> {
+    const { Name, FeedUrl } = this.props.provider;
+    const FullCacheKey = CacheKey +":"+FeedUrl;
+
     // before we do anything with the data provider, let's make sure that we don't have stuff stored in the cache
-
     // load from cache if: 1) we said to use cache, and b) if we have something in cache
-    if (useCacheIfPossible && localStorage.getItem(CacheKey)) {
-      let feedCache: IFeedCache = JSON.parse(localStorage.getItem(CacheKey));
+    if (useCacheIfPossible && localStorage.getItem(FullCacheKey)) {
+      let feedCache: IFeedCache = JSON.parse(localStorage.getItem(FullCacheKey));
 
-      const { Name, FeedUrl } = this.props.provider;
+      //const { Name, FeedUrl } = this.props.provider;
       const cacheStillValid: boolean = moment().isBefore(feedCache.expiry);
 
       // make sure the cache hasn't expired or that the settings haven't changed
@@ -408,6 +410,15 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
 
       try {
         let events = await dataProvider.getEvents();
+
+        const cache: IFeedCache = {
+          expiry: moment().add(dataProvider.CacheDuration, "days"),
+          feedType: Name,
+          feedUrl: FeedUrl,
+          events: events
+        };
+
+        localStorage.setItem(FullCacheKey, JSON.stringify(cache));
         if (dataProvider.MaxTotal > 0) {
           events = events.slice(0, dataProvider.MaxTotal);
         }
@@ -417,10 +428,12 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
           error: undefined,
           events: events
         });
+
         return;
       }
       catch (error) {
         console.log("Exception returned by getEvents", error.message);
+        localStorage.removeItem(FullCacheKey);
         this.setState({
           isLoading: false,
           error: error.message,

@@ -24,7 +24,6 @@ export class iCalCalendarService extends BaseCalendarService implements ICalenda
       const veventList: any[] = comp.getAllSubcomponents("vevent");
       let events: ICalendarEvent[] = veventList.map((vevent: any) => {
         const event: ICAL.Event = new ICAL.Event(vevent);
-        console.log(event);
         let startDate = this.convertToDate(event.startDate);
         let endDate = this.convertToDate(event.endDate);
 
@@ -42,7 +41,7 @@ export class iCalCalendarService extends BaseCalendarService implements ICalenda
         return eventItem;
       });
 
-      return this.filterEventRange(events);
+      return this.filterEventRange(this.fixAllDayEvents(events));
     }
     catch (error) {
       console.log("Exception caught by catch in iCal provider", error);

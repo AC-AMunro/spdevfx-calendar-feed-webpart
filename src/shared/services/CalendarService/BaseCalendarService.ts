@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientResponse } from "@microsoft/sp-http";
+import { HttpClient, HttpClientResponse, IHttpClientOptions } from "@microsoft/sp-http";
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import * as moment from "moment";
 import { CalendarEventRange } from ".";
@@ -31,6 +31,9 @@ export abstract class BaseCalendarService implements ICalendarService {
   protected fixAllDayEvents(events: ICalendarEvent[]): ICalendarEvent[] {
     events.forEach((event: ICalendarEvent) => {
       if (event.allDay) {
+        event.start.setHours(0);
+        event.end.setHours(0);
+
         const startMoment: moment.Moment = moment(event.start);
         const endMoment: moment.Moment = moment(event.end).add(-1, "minute");
 
@@ -91,8 +94,12 @@ export abstract class BaseCalendarService implements ICalendarService {
     // would love to use a different approach to workaround CORS issues
     const requestUrl: string = this.getCORSUrl(feedUrl);
 
+    const httpClientOptions: IHttpClientOptions = {
+      headers: new Headers()
+    };
+
     return this.Context.httpClient.fetch(requestUrl,
-      HttpClient.configurations.v1, {});
+      HttpClient.configurations.v1, httpClientOptions);
   }
 
   /**

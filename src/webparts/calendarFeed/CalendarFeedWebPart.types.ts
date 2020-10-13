@@ -20,11 +20,6 @@ export interface ICalendarFeedWebPartProps {
   feedType: CalendarServiceProviderType;
 
   /**
-   * maximum number of events per page
-   */
-  maxEvents: number;
-
-  /**
    * Maximum total number of events to load
    */
   maxTotal: number;

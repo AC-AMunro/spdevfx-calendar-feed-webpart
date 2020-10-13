@@ -110,7 +110,6 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
         displayMode: this.displayMode,
         context: this.context,
         isConfigured: this._isConfigured(),
-        maxEvents: this.properties.maxEvents,
         provider: this._getDataProvider(),
         themeVariant: this._themeVariant,
         updateProperty: (value: string) => {
@@ -146,7 +145,6 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
 
     const {
       feedUrl,
-      maxEvents,
       useCORS,
       cacheDuration,
       feedType,

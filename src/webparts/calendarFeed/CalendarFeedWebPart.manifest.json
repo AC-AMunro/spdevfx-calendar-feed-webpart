@@ -24,7 +24,6 @@
       "properties": {
         "title": "External Calendar",
         "dateRange": 4,
-        "maxEvents": 4,
         "useCORS": false,
         "cacheDuration": 15,
         "maxTotal": 10,
