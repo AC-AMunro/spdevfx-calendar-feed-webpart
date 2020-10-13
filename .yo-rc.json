@@ -3,8 +3,8 @@
     "isCreatingSolution": true,
     "environment": "spo",
     "version": "1.10.0",
-    "libraryName": "react-calendar-feed",
-    "libraryId": "25653136-fc83-4abe-b9d2-a4ac041959d5",
+    "libraryName": "avcol-calendar-feed",
+    "libraryId": "5b228147-70ca-43fa-9dce-f6de786e0ba3",
     "packageManager": "npm",
     "componentType": "webpart"
   }

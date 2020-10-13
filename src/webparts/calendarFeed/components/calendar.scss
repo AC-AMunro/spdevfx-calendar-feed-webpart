@@ -4,6 +4,10 @@
   background-color: $ms-color-themeDark;
 }
 
+.rbc-event {
+  color: inherit;
+}
+
 .rbc-event:hover {
   border-width: 2px;
 }
@@ -84,8 +88,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-.rbc-event { color: inherit; }
 
 .rbc-agenda-event-cell * {
   white-space: nowrap;

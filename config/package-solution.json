@@ -1,12 +1,12 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
-    "name": "react-calendar-feed-client-side-solution",
-    "id": "25653136-fc83-4abe-b9d2-a4ac041959d5",
-    "version": "5.2.0.0",
+    "name": "avcol-calendar-feed-calendar",
+    "id": "5b228147-70ca-43fa-9dce-f6de786e0ba3",
+    "version": "1.0.0.0",
     "includeClientSideAssets": true
   },
   "paths": {
-    "zippedPackage": "solution/react-calendar-feed.sppkg"
+    "zippedPackage": "solution/avcol-calendar-feed.sppkg"
   }
 }
