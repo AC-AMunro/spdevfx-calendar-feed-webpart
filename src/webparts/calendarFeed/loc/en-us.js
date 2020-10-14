@@ -67,6 +67,7 @@ define([], function() {
     PreviousLabel: "Previous",
     NextLabel: "Next",
     ShowMore: "more",
-    EventOwnerLabel: "event owner"
+    EventOwnerLabel: "event owner",
+    AllDayLabel: "All Day"
   }
 });
