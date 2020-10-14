@@ -4,8 +4,8 @@
 
 This web part is an amalgamation of the two sample web parts on the pnp/sp-dev-fx-webparts repository
 
-https://github.com/pnp/sp-dev-fx-webparts/tree/master/samples/react-calendar-feed
-https://github.com/pnp/sp-dev-fx-webparts/tree/master/samples/react-calendar
+- https://github.com/pnp/sp-dev-fx-webparts/tree/master/samples/react-calendar-feed
+- https://github.com/pnp/sp-dev-fx-webparts/tree/master/samples/react-calendar
 
 ## Summary
 
