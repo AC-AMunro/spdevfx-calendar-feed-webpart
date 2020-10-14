@@ -32,7 +32,6 @@ export interface ICalendarFeedState {
   events: ICalendarEvent[];
   error: any|undefined;
   isLoading: boolean;
-  currentPage: number;
 }
 
 /**

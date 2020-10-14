@@ -142,7 +142,6 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
       return { key: provider.key, text: provider.label };
     });
 
-
     const {
       feedUrl,
       useCORS,

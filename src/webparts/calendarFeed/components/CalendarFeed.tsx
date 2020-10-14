@@ -36,8 +36,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
     this.state = {
       isLoading: false,
       events: [],
-      error: undefined,
-      currentPage: 1
+      error: undefined
     };
   }
 
@@ -288,6 +287,8 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
       return (<div className={styles.emptyMessage}>{strings.NoEventsMessage}</div>);
     }
 
+    console.log(this.state);
+
     return (<Calendar
       dayPropGetter = {this.dayPropGetter}
       localizer={localizer}
@@ -386,7 +387,28 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
     // before we do anything with the data provider, let's make sure that we don't have stuff stored in the cache
     // load from cache if: 1) we said to use cache, and b) if we have something in cache
     if (useCacheIfPossible && localStorage.getItem(FullCacheKey)) {
-      let feedCache: IFeedCache = JSON.parse(localStorage.getItem(FullCacheKey));
+
+      // RegEx for matching dates
+      var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
+      var reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
+      
+      // Parser for field data, turn string dates into Date objects
+      let cacheParser = (key, value) => {
+          if (typeof value === 'string') {
+              var a = reISO.exec(value);
+              if (a)
+                  return new Date(value);
+              a = reMsAjax.exec(value);
+              if (a) {
+                  var b = a[1].split(/[-+,.]/);
+                  return new Date(b[0] ? +b[0] : 0 - +b[1]);
+              }
+          }
+          return value;
+      };
+
+      // parse the stored JSON with our cacheParser
+      let feedCache: IFeedCache = JSON.parse(localStorage.getItem(FullCacheKey), cacheParser);
 
       //const { Name, FeedUrl } = this.props.provider;
       const cacheStillValid: boolean = moment().isBefore(feedCache.expiry);
@@ -395,6 +417,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
       if (cacheStillValid && feedCache.feedType === Name && feedCache.feedUrl === FeedUrl) {
         this.setState({
           isLoading: false,
+          error: undefined,
           events: feedCache.events
         });
         return;
@@ -410,15 +433,6 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
 
       try {
         let events = await dataProvider.getEvents();
-
-        const cache: IFeedCache = {
-          expiry: moment().add(dataProvider.CacheDuration, "days"),
-          feedType: Name,
-          feedUrl: FeedUrl,
-          events: events
-        };
-
-        localStorage.setItem(FullCacheKey, JSON.stringify(cache));
         if (dataProvider.MaxTotal > 0) {
           events = events.slice(0, dataProvider.MaxTotal);
         }
@@ -428,6 +442,15 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
           error: undefined,
           events: events
         });
+
+        const cache: IFeedCache = {
+          expiry: moment().add(dataProvider.CacheDuration, "days"),
+          feedType: Name,
+          feedUrl: FeedUrl,
+          events: events
+        };
+
+        localStorage.setItem(FullCacheKey, JSON.stringify(cache));
 
         return;
       }
