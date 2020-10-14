@@ -9,11 +9,20 @@
           "manifest": "./src/webparts/calendarFeed/CalendarFeedWebPart.manifest.json"
         }
       ]
+    },
+    "calendar-feed-summary-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/calendarFeedSummary/CalendarFeedSummaryWebPart.js",
+          "manifest": "./src/webparts/calendarFeedSummary/CalendarFeedSummaryWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
   "localizedResources": {
     "CalendarFeedWebPartStrings": "lib/webparts/calendarFeed/loc/{locale}.js",
+    "CalendarFeedSummaryWebPartStrings": "lib/webparts/calendarFeedSummary/loc/{locale}.js",
     "CalendarServicesStrings": "lib/shared/services/CalendarService/loc/{locale}.js",
     "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",
     "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js"

@@ -22,6 +22,7 @@ export class iCalCalendarService extends BaseCalendarService implements ICalenda
       const jsonified: any = ICAL.parse(data);
       const comp: any = new ICAL.Component(jsonified);
       const veventList: any[] = comp.getAllSubcomponents("vevent");
+
       let events: ICalendarEvent[] = veventList.map((vevent: any) => {
         const event: ICAL.Event = new ICAL.Event(vevent);
         let startDate = this.convertToDate(event.startDate);

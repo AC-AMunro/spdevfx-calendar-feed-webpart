@@ -39,7 +39,7 @@ export abstract class BaseCalendarService implements ICalendarService {
         event.end = endMoment.toDate();
 
         if (startMoment.isSame(endMoment, "day")) {
-          event.end = event.start;
+          //event.end = event.start;
         }
       }
       return event;
@@ -95,12 +95,8 @@ export abstract class BaseCalendarService implements ICalendarService {
     // would love to use a different approach to workaround CORS issues
     const requestUrl: string = this.getCORSUrl(feedUrl);
 
-    const httpClientOptions: IHttpClientOptions = {
-      headers: new Headers()
-    };
-
     return this.Context.httpClient.fetch(requestUrl,
-      HttpClient.configurations.v1, httpClientOptions);
+      HttpClient.configurations.v1, {});
   }
 
   /**

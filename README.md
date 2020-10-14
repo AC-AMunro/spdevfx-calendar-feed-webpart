@@ -1,15 +1,8 @@
 # React Calendar Feed Web Part
 
-## Origins
-
-This web part is an amalgamation of the two sample web parts on the pnp/sp-dev-fx-webparts repository
-
-- https://github.com/pnp/sp-dev-fx-webparts/tree/master/samples/react-calendar-feed
-- https://github.com/pnp/sp-dev-fx-webparts/tree/master/samples/react-calendar
-
 ## Summary
 
-This web part uses event feeds from various sources and renders events using a look and feel that is consistent with the SharePoint out-of-the-box Group calendar/events web part.
+This solution contains 2 web parts which use event feeds from various sources.
 
 It supports the following types of feeds:
 
@@ -19,11 +12,18 @@ It supports the following types of feeds:
 - Exchange Public Calendar
 - SharePoint
 
-The web part was designed to allow other calendar feed types (or any other type of data you'd like to show as events). If you have additional feeds that you'd like to support, please contact the author or submit a pull request.
+The solution was designed to allow other calendar feed types (or any other type of data you'd like to show as events). If you have additional feeds that you'd like to support, please contact the author or submit a pull request.
 
 To improve performance, the web part caches the events to the user's local storage (so that it doesn't retrieve the events every time the user visits the page). You can turn off the cache by setting the cache duration to 0 minutes.
 
-For more information about how this solution was built, including some design decisions and information on how you can extend this example to allow additional event feed provider, visit https://tahoeninjas.blog/creating-a-calendar-feed-web-part.
+For more information about how this solution was built, including some design decisions and information on how you can extend this example to allow additional event feed provider, visit the original calendar-feed-summary author's blog: https://tahoeninjas.blog/creating-a-calendar-feed-web-part.
+
+## Origins
+
+This web part is a combined version of the two sample web parts on the pnp/sp-dev-fx-webparts repository
+
+- https://github.com/pnp/sp-dev-fx-webparts/tree/master/samples/react-calendar-feed
+- https://github.com/pnp/sp-dev-fx-webparts/tree/master/samples/react-calendar
 
 ## Used SharePoint Framework Version
 
