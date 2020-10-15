@@ -66,7 +66,7 @@ export class SharePointCalendarService extends BaseCalendarService
         return eventItem;
       });
       // Return the calendar items
-      return events;
+      return this.fixAllDayEvents(events);
     }
     catch (error) {
       console.log("Exception caught by catch in SharePoint provider", error);

@@ -214,22 +214,14 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
                   <span className={styles.DocumentCardTitleTime}>{moment(event.start).format('h:mm A')} - {moment(event.end).format('h:mm A')}</span>
               }
               
-              { event.location != "" ? 
-              <Icon iconName='MapPin' className={styles.locationIcon} style={{ color: event.color }} /> && 
-              <DocumentCardTitle
-                title={`${event.location}`}
-                shouldTruncate={true}
-                showAsSecondaryTitle={true}
-                className={styles.location}
-              /> : "" }
-              { event.url != undefined && event.url != "" ?
-              <Icon iconName='MapPin' className={styles.locationIcon} style={{ color: event.color }} /> && 
-              <DocumentCardTitle
-                title={`${event.url}`}
-                shouldTruncate={true}
-                showAsSecondaryTitle={true}
-                className={styles.location}
-              /> : "" }
+              { (event.location != undefined && event.location != null && event.location != '') && <span> 
+                <Icon iconName='MapPin' className={styles.locationIcon} style={{ color: event.color }} />
+                <span className={styles.location}>{event.location}</span>
+              </span> }
+              { (event.url != undefined && event.url != null && event.url != '') && <span>
+                <Icon iconName='Globe' className={styles.websiteIcon} style={{ color: event.color }} />
+                <a href={event.url} className={styles.website}>Visit URL</a>
+              </span> }
             </DocumentCardDetails>
           </DocumentCard>
         </div>
@@ -242,6 +234,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
           cardDismissDelay={1000}
           type={HoverCardType.plain}
           plainCardProps={{ onRenderPlainCard: onRenderPlainCard }}
+          instantOpenOnClick={true}
           onCardHide={(): void => {
           }}
         >
