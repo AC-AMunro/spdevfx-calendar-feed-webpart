@@ -1,8 +1,11 @@
-# React Calendar Feed Web Part
+# React Event Feed Web Parts
 
 ## Summary
 
 This solution contains 2 web parts which use event feeds from various sources.
+
+- Event Feed Summary
+- Event Feed Calendar
 
 It supports the following types of feeds:
 
