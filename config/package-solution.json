@@ -2,9 +2,9 @@
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
     "name": "external-calendar-feed",
-    "title": "External Calendar",
+    "title": "External Calendar WebParts",
     "id": "5b228147-70ca-43fa-9dce-f6de786e0ba3",
-    "version": "1.0.1.0",
+    "version": "1.0.1.1",
     "includeClientSideAssets": true
   },
   "paths": {

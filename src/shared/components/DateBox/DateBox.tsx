@@ -10,9 +10,7 @@ import { DateBoxSize, IDateBoxProps } from ".";
 export const DateBox = (props: IDateBoxProps) => {
   // convert start and end date into moments so that we can manipulate them
   const startMoment: moment.Moment = moment(props.startDate);
-
-  // event actually ends one second before the end date
-  const endMoment: moment.Moment = moment(props.endDate).add(-1, "s");
+  const endMoment: moment.Moment = moment(props.endDate);
 
   // check if both dates are on the same day
   const isSameDay: boolean = startMoment.isSame(endMoment, "day");

@@ -37,6 +37,7 @@ export class RSSCalendarService extends BaseCalendarService implements ICalendar
         };
         return eventItem;
       });
+
       return events;
     });
   }
