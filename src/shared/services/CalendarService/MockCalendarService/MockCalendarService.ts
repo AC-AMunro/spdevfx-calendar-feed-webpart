@@ -10,6 +10,16 @@ import { ICalendarService } from "../ICalendarService";
 
 const sampleEvents: ICalendarEvent[] = [
   {
+    title: "This event has a paragraph description",
+    start: moment().add(1, "d").toDate(),
+    end: moment().add(1, "d").toDate(),
+    url: "https://www.contoso.com/news-events/events/1/",
+    allDay: true,
+    category: "Meeting",
+    location: "Barrie, ON",
+    description: "<p>This is a description</p>"
+  },
+  {
     title: "This event will be tomorrow",
     start: moment().add(1, "d").toDate(),
     end: moment().add(1, "d").toDate(),

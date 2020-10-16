@@ -214,7 +214,6 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
                   <span className={styles.DocumentCardTitleTime}>{strings.AllDayLabel}</span> :
                   <span className={styles.DocumentCardTitleTime}>{moment(event.start).format('h:mm A')} - {moment(event.end).format('h:mm A')}</span>
               }
-              
               { (event.location != undefined && event.location != null && event.location != '') && <span> 
                 <Icon iconName='MapPin' className={styles.locationIcon} style={{ color: event.color }} />
                 <span className={styles.location}>{event.location}</span>
@@ -380,6 +379,10 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
     const { Name, FeedUrl } = this.props.provider;
     const FullCacheKey = CacheKey + ":" + FeedUrl;
 
+    if(this.props.provider.Name == 'Mock' || this.props.provider.CacheDuration == 0) {
+      useCacheIfPossible = false;
+    }
+
     // before we do anything with the data provider, let's make sure that we don't have stuff stored in the cache
     // load from cache if: 1) we said to use cache, and b) if we have something in cache
     if (useCacheIfPossible && localStorage.getItem(FullCacheKey)) {
@@ -433,14 +436,16 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
       try {
         let events = await this.props.provider.getEvents();
 
-        const cache: IFeedCache = {
-          expiry: moment().add(this.props.provider.CacheDuration, "minutes"),
-          feedType: Name,
-          feedUrl: FeedUrl,
-          events: events
-        };
+        if(useCacheIfPossible) {
+          const cache: IFeedCache = {
+            expiry: moment().add(this.props.provider.CacheDuration, "minutes"),
+            feedType: Name,
+            feedUrl: FeedUrl,
+            events: events
+          };
 
-        localStorage.setItem(FullCacheKey, JSON.stringify(cache));
+          localStorage.setItem(FullCacheKey, JSON.stringify(cache));
+        }
 
         if (this.props.provider.MaxTotal > 0) {
           events = events.slice(0, this.props.provider.MaxTotal);
