@@ -100,3 +100,8 @@ This Web Part illustrates the following concepts on top of the SharePoint Framew
 - Creating extensible services
 - Using a proxy to resolve CORS issues
 - Retrieving SharePoint events from a list with a filter
+
+
+## Fixing ical.js issue
+
+if (typeof ICAL !== "undefined") { module.exports = ICAL; return; }

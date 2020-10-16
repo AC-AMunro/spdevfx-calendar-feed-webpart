@@ -4,7 +4,7 @@
     "name": "external-calendar-feed",
     "title": "External Calendar WebParts",
     "id": "5b228147-70ca-43fa-9dce-f6de786e0ba3",
-    "version": "1.0.1.2",
+    "version": "1.0.1.4",
     "includeClientSideAssets": true
   },
   "paths": {

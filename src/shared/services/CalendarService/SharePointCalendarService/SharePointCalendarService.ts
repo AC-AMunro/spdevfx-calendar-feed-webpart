@@ -45,14 +45,15 @@ export class SharePointCalendarService extends BaseCalendarService
     // Build a filter so that we don't retrieve every single thing unless necesssary
     let dateFilter: string = "EventDate ge datetime'" + this.EventRange.Start.toISOString() + "' and EndDate lt datetime'" + this.EventRange.End.toISOString() + "'";
     try {
+      const list = await web.getList(listUrl).get();
       const items = await web.getList(listUrl)
-        .items.select("Id,Title,Description,EventDate,EndDate,fAllDayEvent,Category,Location")
+      .items.select("Id,Title,Description,EventDate,EndDate,fAllDayEvent,Category,Location")
         .orderBy('EventDate', true)
         .filter(dateFilter)
         .get();
       // Once we get the list, convert to calendar events
       let events: ICalendarEvent[] = items.map((item: any) => {
-        let eventUrl: string = combine(webUrl, "DispForm.aspx?ID=" + item.Id);
+        let eventUrl: string = combine(siteUrl, "_layouts/15/Event.aspx?ListGuid=" + list.Id + "&ItemId=" + item.Id);
         const eventItem: ICalendarEvent = {
           title: item.Title,
           start: item.EventDate,
