@@ -330,7 +330,7 @@ export default class CalendarFeedSummary extends React.Component<ICalendarFeedSu
     const { Name, FeedUrl } = this.props.provider;
     const FullCacheKey = CacheKey + ":" + FeedUrl;
 
-    if(this.props.provider.Name == 'Mock' || this.props.provider.CacheDuration == 0) {
+    if(this.props.provider.Name === CalendarServiceProviderType.Mock || this.props.provider.CacheDuration == 0) {
       useCacheIfPossible = false;
     }
 

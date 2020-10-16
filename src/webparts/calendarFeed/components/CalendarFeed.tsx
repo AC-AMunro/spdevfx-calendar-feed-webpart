@@ -231,7 +231,8 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
     return (
       <div style={{ height: 22 }}>
         <HoverCard
-          cardDismissDelay={1000}
+          cardDismissDelay={250}
+          cardOpenDelay={100}
           type={HoverCardType.plain}
           plainCardProps={{ onRenderPlainCard: onRenderPlainCard }}
           instantOpenOnClick={true}
@@ -379,7 +380,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
     const { Name, FeedUrl } = this.props.provider;
     const FullCacheKey = CacheKey + ":" + FeedUrl;
 
-    if(this.props.provider.Name == 'Mock' || this.props.provider.CacheDuration == 0) {
+    if(this.props.provider.Name === CalendarServiceProviderType.Mock || this.props.provider.CacheDuration == 0) {
       useCacheIfPossible = false;
     }
 
