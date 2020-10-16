@@ -104,4 +104,6 @@ This Web Part illustrates the following concepts on top of the SharePoint Framew
 
 ## Fixing ical.js issue
 
+find build\ical.js in node_modules\ical.js and add the below to the start
+
 if (typeof ICAL !== "undefined") { module.exports = ICAL; return; }

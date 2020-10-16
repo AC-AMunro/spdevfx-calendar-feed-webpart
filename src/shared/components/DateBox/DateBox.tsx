@@ -16,9 +16,9 @@ export const DateBox = (props: IDateBoxProps) => {
   const isSameDay: boolean = startMoment.isSame(endMoment, "day");
 
   const { themeVariant } = props;
-  const backgroundColor: string = themeVariant && themeVariant.palette["primaryBackground"];
+  const backgroundColor: string = themeVariant && themeVariant.semanticColors.bodyBackground;
   const textColor: string = themeVariant && backgroundColor != themeVariant.semanticColors.bodyText ?
-    themeVariant.semanticColors.bodyText : themeVariant.palette["primaryText"];
+    themeVariant.semanticColors.bodyText : themeVariant.palette["accent"];
   // If the background color matches the text color, it is probably a reversed section, use a different border color
   const borderColor: string = themeVariant && backgroundColor != themeVariant.semanticColors.bodyText ? themeVariant.semanticColors.bodyDivider : "[theme:neutralLight, default: #eaeaea]";
 
@@ -30,7 +30,6 @@ export const DateBox = (props: IDateBoxProps) => {
         style={
           props.themeVariant &&
           {
-            // KLUDGE: It seems like the themeVariant palette doesn't expose primaryBackground
             backgroundColor: backgroundColor,
             borderColor: borderColor,
             color: textColor

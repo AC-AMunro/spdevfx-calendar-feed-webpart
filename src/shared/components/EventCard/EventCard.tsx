@@ -83,10 +83,17 @@ export const EventCard = (props: IEventCardProps) => {
 
   //Unfortunately, themes don't always populate all the palette/semantic colors.
   //Detect if background color is the same as the foreground and find default
-  const backgroundColor: string = themeVariant && (isNarrow ? themeVariant.semanticColors.bodyBackground : themeVariant.palette["primaryBackground"]);
-  const textColor: string = themeVariant && backgroundColor != themeVariant.semanticColors.bodyText ?
-    themeVariant.semanticColors.bodyText : themeVariant.palette["primaryText"];
-  const subTextColor: string = themeVariant && themeVariant.semanticColors.bodySubtext && backgroundColor != themeVariant.semanticColors.bodySubtext ? themeVariant.semanticColors.bodySubtext : textColor;
+  const backgroundColor: string = themeVariant && themeVariant.semanticColors.bodyBackground;
+  //const textColor: string = themeVariant && backgroundColor != themeVariant.semanticColors.bodyText ?
+  //  themeVariant.semanticColors.bodyText : themeVariant.palette["accent"];
+  //const subTextColor: string = themeVariant && themeVariant.semanticColors.bodySubtext && backgroundColor != themeVariant.semanticColors.bodySubtext ? themeVariant.semanticColors.bodySubtext : textColor;
+  const textColor: string = themeVariant && isNarrow ?
+    themeVariant.semanticColors.bodyText : themeVariant.semanticColors.inputText;
+  const subTextColor: string = themeVariant && isNarrow ?
+    themeVariant.semanticColors.bodyText : themeVariant.semanticColors.inputText;
+
+  console.log(themeVariant);
+  console.log(backgroundColor, textColor, subTextColor);
 
   if (isNarrow) {
     // Calculate the date and string format
