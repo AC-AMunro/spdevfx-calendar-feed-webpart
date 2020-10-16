@@ -92,9 +92,6 @@ export const EventCard = (props: IEventCardProps) => {
   const subTextColor: string = themeVariant && isNarrow ?
     themeVariant.semanticColors.bodyText : themeVariant.semanticColors.inputText;
 
-  console.log(themeVariant);
-  console.log(backgroundColor, textColor, subTextColor);
-
   if (isNarrow) {
     // Calculate the date and string format
 

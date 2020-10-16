@@ -286,7 +286,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
     }
 
     return (<Calendar
-      dayPropGetter = {this.dayPropGetter}
+      dayPropGetter={this.dayPropGetter}
       localizer={localizer}
       selectable
       events={this.state.events}

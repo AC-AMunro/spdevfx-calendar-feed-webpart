@@ -14,7 +14,7 @@ export class CalendarEventRange {
     public DateRange: DateRange;
 
     constructor(range: DateRange) {
-        this.Start = moment().toDate();
+        this.Start = moment().hour(0).toDate();
         this.DateRange = range;
         this.End = this._getRangeEnd();
     }

@@ -7,6 +7,7 @@ import { BaseCalendarService } from "../BaseCalendarService";
 import { ICalendarEvent } from "../ICalendarEvent";
 import { Web } from "@pnp/sp";
 import { combine } from "@pnp/common";
+import * as moment from "moment";
 
 export class SharePointCalendarService extends BaseCalendarService
   implements ICalendarService {
@@ -49,15 +50,18 @@ export class SharePointCalendarService extends BaseCalendarService
       const items = await web.getList(listUrl)
       .items.select("Id,Title,Description,EventDate,EndDate,fAllDayEvent,Category,Location")
         .orderBy('EventDate', true)
-        .filter(dateFilter)
+        //.filter(dateFilter)
         .get();
       // Once we get the list, convert to calendar events
       let events: ICalendarEvent[] = items.map((item: any) => {
         let eventUrl: string = combine(siteUrl, "_layouts/15/Event.aspx?ListGuid=" + list.Id + "&ItemId=" + item.Id);
+        // why oh why do they leave all day events in UTC time but don't set the date/time correctly...?
+        let eventDate: Date = item.fAllDayEvent ? item.EventDate.replace('Z', '') : item.EventDate;
+        let endDate: Date = item.fAllDayEvent ? item.EndDate.replace('Z', '') : item.EndDate;
         const eventItem: ICalendarEvent = {
           title: item.Title,
-          start: item.EventDate,
-          end: item.EndDate,
+          start: moment(eventDate).toDate(),
+          end: moment(endDate).toDate(),
           url: eventUrl,
           allDay: item.fAllDayEvent,
           category: item.Category,
@@ -67,7 +71,7 @@ export class SharePointCalendarService extends BaseCalendarService
         return eventItem;
       });
       // Return the calendar items
-      return this.fixAllDayEvents(events);
+      return events;
     }
     catch (error) {
       console.log("Exception caught by catch in SharePoint provider", error);
