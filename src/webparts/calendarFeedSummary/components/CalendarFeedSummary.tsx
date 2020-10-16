@@ -114,6 +114,7 @@ export default class CalendarFeedSummary extends React.Component<ICalendarFeedSu
           <WebPartTitle displayMode={this.props.displayMode}
             title={this.props.title}
             updateProperty={this.props.updateProperty}
+            themeVariant={this.props.themeVariant}
           />
         </div>
         <div className={styles.content}>
