@@ -214,11 +214,11 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
                   <span className={styles.DocumentCardTitleTime}>{strings.AllDayLabel}</span> :
                   <span className={styles.DocumentCardTitleTime}>{moment(event.start).format('h:mm A')} - {moment(event.end).format('h:mm A')}</span>
               }
-              { (event.location != undefined && event.location != null && event.location != '') && <span> 
+              { (event.location != undefined && event.location != null && event.location != '') && <span className={styles.locationContainer}> 
                 <Icon iconName='MapPin' className={styles.locationIcon} style={{ color: event.color }} />
                 <span className={styles.location}>{event.location}</span>
               </span> }
-              { (event.url != undefined && event.url != null && event.url != '') && <span>
+              { (event.url != undefined && event.url != null && event.url != '') && <span className={styles.websiteContainer}>
                 <Icon iconName='Globe' className={styles.websiteIcon} style={{ color: event.color }} />
                 <a href={event.url} className={styles.website}>Visit URL</a>
               </span> }
