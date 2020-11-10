@@ -36,6 +36,7 @@ import { ICalendarFeedProps } from "./components/CalendarFeed.types";
 
 // Support for theme variants
 import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme, ISemanticColors } from '@microsoft/sp-component-base';
+import { PropertyPaneFeedList } from "../../controls/PropertyPaneFeedList/PropertyPaneFeedList";
 
 /**
  * Calendar Feed Web Part
@@ -161,6 +162,14 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
             description: strings.PropertyPaneDescription
           },
           groups: [
+            {
+              groupName: "providers",
+              groupFields: [
+                new PropertyPaneFeedList("Providers", {
+                  label: "Providers"
+                })
+              ]
+            },
             {
               groupName: strings.FeedSettingsGroupName,
               groupFields: [
