@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IColumn, IDropdownOption, MaskedTextField, PrimaryButton, SelectionMode, Slider, TextField, Toggle } from 'office-ui-fabric-react';
 
-import * as strings from "CalendarFeedWebPartStrings";
+import * as settingsStrings from "CalendarServiceSettingsStrings";
 
 import { IAddFeedDialogProps } from './IAddFeedDialogProps';
 import { IAddFeedDialogState } from './IAddFeedDialogState';
@@ -34,46 +34,46 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
         });
         
         const dateRangeOptions = [
-            { key: DateRange.OneWeek, text: strings.DateRangeOptionWeek },
-            { key: DateRange.TwoWeeks, text: strings.DateRangeOptionTwoWeeks },
-            { key: DateRange.Month, text: strings.DateRangeOptionMonth },
-            { key: DateRange.Quarter, text: strings.DateRangeOptionQuarter },
-            { key: DateRange.Year, text: strings.DateRangeOptionUpcoming },
+            { key: DateRange.OneWeek, text: settingsStrings.DateRangeOptionWeek },
+            { key: DateRange.TwoWeeks, text: settingsStrings.DateRangeOptionTwoWeeks },
+            { key: DateRange.Month, text: settingsStrings.DateRangeOptionMonth },
+            { key: DateRange.Quarter, text: settingsStrings.DateRangeOptionQuarter },
+            { key: DateRange.Year, text: settingsStrings.DateRangeOptionUpcoming },
         ];
 
         return (
-            <Dialog hidden={false} title="Add Feed" type={DialogType.normal} onDismiss={this.props.OnDismiss}>
-                <Dropdown label={strings.FeedTypeFieldLabel}
+            <Dialog hidden={false} title={(this.props.SelectedFeed) ? settingsStrings.EditFeed : settingsStrings.AddFeed} type={DialogType.normal} onDismiss={this.props.OnDismiss}>
+                <Dropdown label={settingsStrings.FeedTypeFieldLabel}
                     options={feedTypeOptions}
                     onChange={(e, newValue?) => this.setState({ FeedType: CalendarServiceProviderType[newValue.key] })}
                     selectedKey={this.state.FeedType}
                 />
-                <TextField label={strings.FeedUrlFieldLabel} placeholder="https://"
+                <TextField label={settingsStrings.FeedUrlFieldLabel} placeholder="https://"
                     onChange={(e, newValue?) => this.setState({ FeedUrl: newValue }) }
                     defaultValue={this.state.FeedUrl}
                 />
-                <Dropdown label={strings.DateRangeFieldLabel}
+                <Dropdown label={settingsStrings.DateRangeFieldLabel}
                     options={dateRangeOptions}
                     onChange={(e, newValue?) => { this.setState({ DateRange: DateRange[newValue.key] }); } }
                     selectedKey={DateRange[this.state.DateRange]}
                 />
-                <Toggle label={strings.ConvertFromUTCLabel}
-                    onText={strings.ConvertFromUTCOptionYes}
-                    offText={strings.ConvertFromUTCOptionNo}
+                <Toggle label={settingsStrings.ConvertFromUTCLabel}
+                    onText={settingsStrings.ConvertFromUTCOptionYes}
+                    offText={settingsStrings.ConvertFromUTCOptionNo}
                     onChange={(e, newValue?) => this.setState({ ConvertFromUTC: newValue }) }
                     defaultChecked={this.state.ConvertFromUTC}
                 />
-                <Toggle label={strings.UseCORSFieldLabel}
-                    onText={strings.CORSOn}
-                    offText={strings.CORSOff}
+                <Toggle label={settingsStrings.UseCORSFieldLabel}
+                    onText={settingsStrings.CORSOn}
+                    offText={settingsStrings.CORSOff}
                     onChange={(e, newValue?) => this.setState({ UseCORS: newValue }) }
                     defaultChecked={this.state.UseCORS}
                 />
-                <Slider label={strings.CacheDurationFieldLabel} max={1440} min={0} step={15} showValue
+                <Slider label={settingsStrings.CacheDurationFieldLabel} max={1440} min={0} step={15} showValue
                     onChange={(newValue) => this.setState({ CacheDuration: newValue }) }
                     defaultValue={this.state.CacheDuration}
                 />
-                <TextField label={strings.MaxTotalFieldLabel}
+                <TextField label={settingsStrings.MaxTotalFieldLabel}
                     onChange={(e, newValue?) => this.setState({ MaxTotal: parseInt(newValue) }) }
                     defaultValue={this.state.MaxTotal.toString()}
                 />

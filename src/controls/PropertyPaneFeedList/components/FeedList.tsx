@@ -5,7 +5,7 @@ import AddFeedDialog from './AddFeedDialog';
 import { IFeedListProps } from './IFeedListProps';
 import { IFeedListState } from './IFeedListState';
 
-import * as strings from "CalendarFeedWebPartStrings";
+import * as settingsStrings from "CalendarServiceSettingsStrings";
 import { ICalendarServiceSettings } from '../../../shared/services/CalendarService/ICalendarServiceSettings';
 
 export default class FeedList extends React.Component<IFeedListProps, IFeedListState> {
@@ -18,8 +18,8 @@ export default class FeedList extends React.Component<IFeedListProps, IFeedListS
         super(props);
 
         this._columns = [
-            { key: 'feedType', name: 'Type', fieldName: 'FeedType', minWidth: 50, maxWidth: 100, isResizable: true },
-            { key: 'feedUrl', name: 'Url', fieldName: 'FeedUrl', minWidth: 100, maxWidth: 200, isResizable: true },
+            { key: 'feedType', name: settingsStrings.FeedTypeFieldLabel, fieldName: 'FeedType', minWidth: 50, maxWidth: 100, isResizable: true },
+            { key: 'feedUrl', name: settingsStrings.FeedUrlFieldLabel, fieldName: 'FeedUrl', minWidth: 100, maxWidth: 200, isResizable: true },
             { key: 'edit', name: '', fieldName: 'edit', minWidth:25, isResizable: false },
             { key: 'delete', name: '', fieldName: 'delete', minWidth: 25, isResizable: false }
         ];
@@ -44,7 +44,7 @@ export default class FeedList extends React.Component<IFeedListProps, IFeedListS
                 />
 
                 <PrimaryButton
-                    text='Add Feed'
+                    text={settingsStrings.AddFeed}
                     onClick={() => this.setState({ feedPropertiesDialogIsOpen: true, selectedFeed: null })}
                 />
 
