@@ -1,5 +1,5 @@
-import { IFeedListItem } from "./IFeedListItem";
+import { ICalendarServiceSettings } from "../../../shared/services/CalendarService/ICalendarServiceSettings";
 
 export interface IFeedListProps {
-    items: IFeedListItem[];
+    items: ICalendarServiceSettings[];
 }

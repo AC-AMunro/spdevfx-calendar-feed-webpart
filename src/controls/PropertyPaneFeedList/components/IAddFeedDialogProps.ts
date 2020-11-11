@@ -1,7 +1,9 @@
+import { ICalendarServiceSettings } from "../../../shared/services/CalendarService/ICalendarServiceSettings";
 import { IAddFeedDialogState } from "./IAddFeedDialogState";
-import { IFeedListItem } from "./IFeedListItem";
 
 export interface IAddFeedDialogProps {
-    Feed?: IFeedListItem;
+    SelectedFeed?: ICalendarServiceSettings;
     OnSave: (item?: IAddFeedDialogState) => void;
+    OnDelete: (key: any) => void;
+    OnDismiss: () => void;
 }

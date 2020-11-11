@@ -1,6 +1,7 @@
-import { IFeedListItem } from "./IFeedListItem";
+import { ICalendarServiceSettings } from "../../../shared/services/CalendarService/ICalendarServiceSettings";
 
 export interface IFeedListState {
     feedPropertiesDialogIsOpen: boolean;
-    items: IFeedListItem[];
+    selectedFeed?: ICalendarServiceSettings;
+    items: ICalendarServiceSettings[];
 }

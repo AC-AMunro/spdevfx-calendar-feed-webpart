@@ -1,32 +1,32 @@
 import * as React from 'react';
-import { DefaultButton, DetailsList, DetailsListLayoutMode, Dialog, DialogFooter, DialogType, Dropdown, IColumn, IDropdownOption, MaskedTextField, PrimaryButton, SelectionMode, Slider, TextField, Toggle } from 'office-ui-fabric-react';
-import { CalendarServiceProviderList, CalendarServiceProviderType, DateRange } from "../../../shared/services/CalendarService";
+import { DetailsList, DetailsListLayoutMode, IColumn, IconButton, IIconProps, PrimaryButton, SelectionMode } from 'office-ui-fabric-react';
 
 import AddFeedDialog from './AddFeedDialog';
-import { IFeedListItem } from './IFeedListItem';
 import { IFeedListProps } from './IFeedListProps';
 import { IFeedListState } from './IFeedListState';
 
 import * as strings from "CalendarFeedWebPartStrings";
-import { IAddFeedDialogState } from './IAddFeedDialogState';
+import { ICalendarServiceSettings } from '../../../shared/services/CalendarService/ICalendarServiceSettings';
 
 export default class FeedList extends React.Component<IFeedListProps, IFeedListState> {
-    private _providerList: any[];
-
     private _columns: IColumn[];
+
+    private editIcon: IIconProps = { iconName: 'Edit' };
+    private deleteIcon: IIconProps = { iconName: 'Delete' };
 
     constructor(props: IFeedListProps, state: IFeedListState) {
         super(props);
 
-        this._providerList = CalendarServiceProviderList.getProviders();
-
         this._columns = [
-            { key: 'feedType', name: 'Type', fieldName: 'feedType', minWidth: 50, maxWidth: 100, isResizable: true },
-            { key: 'feedUrl', name: 'Url', fieldName: 'feedUrl', minWidth: 100, maxWidth: 200, isResizable: true }
+            { key: 'feedType', name: 'Type', fieldName: 'FeedType', minWidth: 50, maxWidth: 100, isResizable: true },
+            { key: 'feedUrl', name: 'Url', fieldName: 'FeedUrl', minWidth: 100, maxWidth: 200, isResizable: true },
+            { key: 'edit', name: '', fieldName: 'edit', minWidth:25, isResizable: false },
+            { key: 'delete', name: '', fieldName: 'delete', minWidth: 25, isResizable: false }
         ];
 
         this.state = {
             feedPropertiesDialogIsOpen: false,
+            selectedFeed: null,
             items: props.items ? props.items : []
         };
     }
@@ -40,51 +40,66 @@ export default class FeedList extends React.Component<IFeedListProps, IFeedListS
                     items={this.state.items}
                     layoutMode={DetailsListLayoutMode.justified}
                     selectionMode={SelectionMode.none}
+                    onRenderItemColumn={this.handleRenderItemColumn}
                 />
 
                 <PrimaryButton
                     text='Add Feed'
-                    onClick={() => this.setState({ feedPropertiesDialogIsOpen: true })}
+                    onClick={() => this.setState({ feedPropertiesDialogIsOpen: true, selectedFeed: null })}
                 />
 
                 {this.state.feedPropertiesDialogIsOpen ? (
-                    <AddFeedDialog OnSave={this.handleSave} />
+                    <AddFeedDialog SelectedFeed={this.state.selectedFeed} OnSave={this.handleSave} OnDelete={this.handleDelete} OnDismiss={() => this.setState({ feedPropertiesDialogIsOpen: false, selectedFeed: null })} />
                 ) : null}
             </div>
         );
     }
 
-    private handleSave = (item: IAddFeedDialogState) => {
-        if(item.feedKey === undefined) {
-            this.setState({ items: [...this.state.items, {
-                key: item.feedType + item.feedUrl,
-                feedType: item.feedType,
-                feedUrl: item.feedUrl,
-                maxTotal: item.maxTotal,
-                dateRange: item.dateRange,
-                useCORS: item.useCORS,
-                cacheDuration: item.cacheDuration,
-                convertFromUTC: item.convertFromUTC
-            }] });
+    private handleRenderItemColumn = (item: ICalendarServiceSettings, index: number, column: IColumn) : JSX.Element => {
+        if(column.fieldName === 'edit') {
+            return <IconButton iconProps={this.editIcon} title="Edit" ariaLabel="Edit" onClick={() => this.setState({ feedPropertiesDialogIsOpen: true, selectedFeed: item })} />;
+        }
+        else if(column.fieldName === 'delete') {
+            return <IconButton iconProps={this.deleteIcon} title="Delete" ariaLabel="Delete" onClick={() => this.handleDelete(item)} />;
+        }
+
+        return item[column.fieldName];
+    }
+
+    private handleDelete = (item: ICalendarServiceSettings) => {
+        const items = [...this.state.items];
+        if(items.length > 0) {
+            items.splice(items.indexOf(item), 1);
+        }
+        this.setState({ items: items, feedPropertiesDialogIsOpen: false, selectedFeed: null });
+    }
+
+    private handleSave = (item: ICalendarServiceSettings) => {
+        const items = [...this.state.items];
+
+        if(!this.state.selectedFeed) {
+            items.push({
+                FeedType: item.FeedType,
+                FeedUrl: item.FeedUrl,
+                MaxTotal: item.MaxTotal,
+                DateRange: item.DateRange,
+                UseCORS: item.UseCORS,
+                CacheDuration: item.CacheDuration,
+                ConvertFromUTC: item.ConvertFromUTC
+            });
         }
         else {
-            var items = this.state.items;
-            items.map((i) => {
-                if(i.key == item.feedKey)
-                    return {
-                        key: item.feedType + item.feedUrl,
-                        feedType: item.feedType,
-                        feedUrl: item.feedUrl,
-                        maxTotal: item.maxTotal,
-                        dateRange: item.dateRange,
-                        useCORS: item.useCORS,
-                        cacheDuration: item.cacheDuration,
-                        convertFromUTC: item.convertFromUTC
-                    }
-                else
-                    return i;
-            });
-            this.setState({ items: items });
+            items[items.indexOf(this.state.selectedFeed)] = {
+                FeedType: item.FeedType,
+                FeedUrl: item.FeedUrl,
+                MaxTotal: item.MaxTotal,
+                DateRange: item.DateRange,
+                UseCORS: item.UseCORS,
+                CacheDuration: item.CacheDuration,
+                ConvertFromUTC: item.ConvertFromUTC
+            };
         }
+        
+        this.setState({ items: items, feedPropertiesDialogIsOpen: false, selectedFeed: null });
     }
 }
