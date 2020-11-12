@@ -9,7 +9,7 @@ import {
   Icon,
   DocumentCard, DocumentCardTitle, IDocumentCardPreviewProps, DocumentCardPreview, DocumentCardDetails, DocumentCardActivity,
   IPersonaSharedProps, Persona, PersonaSize, PersonaPresence,
-  HoverCard, HoverCardType
+  HoverCard, HoverCardType, IColor, ImageFit
 } from "office-ui-fabric-react";
 import * as React from "react";
 import { CalendarServiceProviderType, ICalendarEvent, ICalendarService } from "../../../shared/services/CalendarService";
@@ -165,12 +165,11 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
    * @memberof Calendar
    */
   public eventStyleGetter(event, start, end, isSelected): any {
-
     let style: any = {
       backgroundColor: 'white',
       borderRadius: '0px',
       opacity: 1,
-      color: event.color,
+      color: '#000000',//event.color,
       borderWidth: '1.1px',
       borderStyle: 'solid',
       borderColor: event.color,
@@ -197,7 +196,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
           // previewImageSrc: event.ownerPhoto,
           //previewIconProps: { iconName: event.fRecurrence === '0' ? 'Calendar': 'RecurringEvent', styles: { root: { color: event.color } }, className: styles.previewEventIcon },
           previewIconProps: { iconName: 'Calendar', styles: { root: { color: event.color } }, className: styles.previewEventIcon },
-          height: 43,
+          height: 43
         }
       ]
     };
@@ -298,31 +297,40 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
       return (<div className={styles.emptyMessage}>{strings.NoEventsMessage}</div>);
     }
 
-    return (<Calendar
-      dayPropGetter={this.dayPropGetter}
-      localizer={localizer}
-      selectable
-      events={this.state.events}
-      startAccessor="start"
-      endAccessor="end"
-      eventPropGetter={this.eventStyleGetter}
-      components={{
-        event: this.renderEvent
-
-      }}
-      defaultDate={moment().startOf('day').toDate()}
-      messages={
-        {
-          'today': strings.TodayLabel,
-          'previous': strings.PreviousLabel,
-          'next': strings.NextLabel,
-          'month': strings.MonthLabel,
-          'week': strings.WeekLabel,
-          'day': strings.DayLabel,
-          'showMore': total => `+${total} ${strings.ShowMore}`
-        }
-      }
-    />);
+    return (
+      <>
+        <Calendar
+          dayPropGetter={this.dayPropGetter}
+          localizer={localizer}
+          selectable
+          events={this.state.events}
+          startAccessor="start"
+          endAccessor="end"
+          eventPropGetter={this.eventStyleGetter}
+          components={{
+            event: this.renderEvent
+          }}
+          defaultDate={moment().startOf('day').toDate()}
+          messages={
+            {
+              'today': strings.TodayLabel,
+              'previous': strings.PreviousLabel,
+              'next': strings.NextLabel,
+              'month': strings.MonthLabel,
+              'week': strings.WeekLabel,
+              'day': strings.DayLabel,
+              'showMore': total => `+${total} ${strings.ShowMore}`
+            }
+          }
+        />
+        <ul className={styles.legend}>
+          {this.props.providers.map((provider:ICalendarService, idx) => {
+            console.log(provider);
+            if (provider.DisplayName) return <li key={idx} style={{ borderColor: provider.Color }}>{provider.DisplayName}</li>;
+          })}
+        </ul>
+      </>
+    );
   }
 
   /**
@@ -397,6 +405,8 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
   private async _loadEvents(useCacheIfPossible: boolean): Promise<void> {
     const { providers } = this.props;
 
+    this.setState({ events: []});
+
     for(const provider of providers) {
       const { Name, FeedUrl } = provider;
       const FullCacheKey = CacheKey + ":" + FeedUrl;
@@ -443,9 +453,9 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
           this.setState({
             isLoading: false,
             error: undefined,
-            events: feedCache.events
+            events: [...this.state.events, ...feedCache.events]
           });
-          return;
+          continue;
         }
       }
 
@@ -457,6 +467,12 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
 
         try {
           let events = await provider.getEvents();
+
+          events.map((event) => {
+            if(provider.Color) event.color = provider.Color;
+            
+            return event;
+          });
 
           if(useCacheIfPossible) {
             const cache: IFeedCache = {
@@ -477,10 +493,10 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
           this.setState({
             isLoading: false,
             error: undefined,
-            events: events
+            events: [...this.state.events, ...events]
           });
 
-          return;
+          continue;
         }
         catch (error) {
           console.log("Exception returned by getEvents", error.message);

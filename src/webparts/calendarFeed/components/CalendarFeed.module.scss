@@ -178,11 +178,28 @@
 }
 
 .calendar {
+  height: 700px;
+
   .container {
     max-width: 100%;
     min-height: 400px;
     height: 600px;
     margin: 0 auto;
+  }
+
+  .legend {
+    list-style: none;
+    margin: 6px 0;
+    padding: 0;
+  }
+
+  .legend li {
+    display: inline-block;
+    border: 1.1px;
+    border-left: 6px;
+    border-style: solid;
+    padding: 2px 5px;
+    margin: 0 4px;
   }
 
   .plainCard {

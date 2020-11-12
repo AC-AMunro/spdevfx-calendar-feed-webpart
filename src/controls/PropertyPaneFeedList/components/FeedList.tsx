@@ -81,26 +81,10 @@ export default class FeedList extends React.Component<IFeedListProps, IFeedListS
         const items = [...this.state.items];
 
         if(!this.state.selectedFeed) {
-            items.push({
-                FeedType: item.FeedType,
-                FeedUrl: item.FeedUrl,
-                MaxTotal: item.MaxTotal,
-                DateRange: item.DateRange,
-                UseCORS: item.UseCORS,
-                CacheDuration: item.CacheDuration,
-                ConvertFromUTC: item.ConvertFromUTC
-            });
+            items.push(item);
         }
         else {
-            items[items.indexOf(this.state.selectedFeed)] = {
-                FeedType: item.FeedType,
-                FeedUrl: item.FeedUrl,
-                MaxTotal: item.MaxTotal,
-                DateRange: item.DateRange,
-                UseCORS: item.UseCORS,
-                CacheDuration: item.CacheDuration,
-                ConvertFromUTC: item.ConvertFromUTC
-            };
+            items[items.indexOf(this.state.selectedFeed)] = item;
         }
         
         this.setState({ items: items, feedPropertiesDialogIsOpen: false, selectedFeed: null }, () => {

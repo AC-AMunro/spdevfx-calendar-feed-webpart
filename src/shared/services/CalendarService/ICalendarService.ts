@@ -1,4 +1,5 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
+import { IColor } from "office-ui-fabric-react";
 import { CalendarEventRange, ICalendarEvent } from ".";
 
 export interface ICalendarService {
@@ -10,5 +11,7 @@ export interface ICalendarService {
     MaxTotal: number;
     ConvertFromUTC: boolean;
     Name: string;
+    DisplayName?: string;
+    Color?: string;
     getEvents: () => Promise<ICalendarEvent[]>;
 }

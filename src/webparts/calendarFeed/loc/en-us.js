@@ -71,6 +71,7 @@ define([], function() {
     NextLabel: "Next",
     ShowMore: "more",
     EventOwnerLabel: "event owner",
-    AllDayLabel: "All Day"
+    AllDayLabel: "All Day",
+    FeedDisplayNameFieldLabel: "Name"
   }
 });

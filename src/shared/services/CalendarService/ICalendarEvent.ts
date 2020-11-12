@@ -1,4 +1,7 @@
+import { IColor } from "office-ui-fabric-react";
+
 export interface ICalendarEvent {
+    color?: string;
     title: string;
     start: Date;
     end: Date;

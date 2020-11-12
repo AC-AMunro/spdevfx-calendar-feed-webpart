@@ -3,29 +3,18 @@ import * as ReactDom from "react-dom";
 
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 import {
-  IPropertyPaneConfiguration,
-  IPropertyPaneDropdownOption,
-  PropertyPaneDropdown,
-  PropertyPaneToggle,
-  PropertyPaneLabel
+  IPropertyPaneConfiguration
 } from "@microsoft/sp-property-pane";
 
 // Needed for data versions
 import { Version } from '@microsoft/sp-core-library';
-
-// PnP Property controls
-import { CalloutTriggers } from "@pnp/spfx-property-controls/lib/PropertyFieldHeader";
-import { PropertyFieldNumber } from "@pnp/spfx-property-controls/lib/PropertyFieldNumber";
-import { PropertyFieldSliderWithCallout } from "@pnp/spfx-property-controls/lib/PropertyFieldSliderWithCallout";
-import { PropertyFieldTextWithCallout } from "@pnp/spfx-property-controls/lib/PropertyFieldTextWithCallout";
-import { PropertyFieldToggleWithCallout } from "@pnp/spfx-property-controls/lib/PropertyFieldToggleWithCallout";
 
 // Localization
 import * as strings from "CalendarFeedWebPartStrings";
 
 // Calendar services
 import { CalendarEventRange, DateRange, ICalendarService } from "../../shared/services/CalendarService";
-import { CalendarServiceProviderList, CalendarServiceProviderType } from "../../shared/services/CalendarService/CalendarServiceProviderList";
+import { CalendarServiceProviderList } from "../../shared/services/CalendarService/CalendarServiceProviderList";
 
 // Web part properties
 import { ICalendarFeedWebPartProps } from "./CalendarFeedWebPart.types";
@@ -35,7 +24,7 @@ import CalendarFeed from "./components/CalendarFeed";
 import { ICalendarFeedProps } from "./components/CalendarFeed.types";
 
 // Support for theme variants
-import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme, ISemanticColors } from '@microsoft/sp-component-base';
+import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
 import { PropertyPaneFeedList } from "../../controls/PropertyPaneFeedList/PropertyPaneFeedList";
 
 /**
@@ -137,23 +126,6 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
    * Show the configuration pane
    */
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-
-    // create a drop down of feed providers from our list
-    const feedTypeOptions: IPropertyPaneDropdownOption[] = this._providerList.map(provider => {
-      return { key: provider.key, text: provider.label };
-    });
-
-    const {
-      feedUrl,
-      useCORS,
-      cacheDuration,
-      feedType,
-      maxTotal,
-      convertFromUTC
-    } = this.properties;
-
-    const isMock: boolean = feedType === CalendarServiceProviderType.Mock;
-
     return {
       pages: [
         {
@@ -170,95 +142,7 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
                   providers: this.properties.providers
                 })
               ]
-            },
-            /*{
-              groupName: strings.FeedSettingsGroupName,
-              groupFields: [
-                // feed type drop down. Add your own types in the drop-down list
-                PropertyPaneDropdown("feedType", {
-                  label: strings.FeedTypeFieldLabel,
-                  options: feedTypeOptions
-                }),
-                // feed url input box -- only if not using a mock provider
-                !isMock && PropertyFieldTextWithCallout("feedUrl", {
-                  calloutTrigger: CalloutTriggers.Hover,
-                  key: "feedUrlFieldId",
-                  label: strings.FeedUrlFieldLabel,
-                  calloutContent:
-                    React.createElement("div", {}, strings.FeedUrlCallout),
-                  calloutWidth: 200,
-                  value: feedUrl,
-                  placeholder: "https://",
-                  deferredValidationTime: 200,
-                  onGetErrorMessage: this._validateFeedUrl.bind(this)
-                }),
-                // how days ahead from today are we getting
-                PropertyPaneDropdown("dateRange", {
-                  label: strings.DateRangeFieldLabel,
-                  options: [
-                    { key: DateRange.OneWeek, text: strings.DateRangeOptionWeek },
-                    { key: DateRange.TwoWeeks, text: strings.DateRangeOptionTwoWeeks },
-                    { key: DateRange.Month, text: strings.DateRangeOptionMonth },
-                    { key: DateRange.Quarter, text: strings.DateRangeOptionQuarter },
-                    { key: DateRange.Year, text: strings.DateRangeOptionUpcoming },
-                  ]
-                }),
-              ]
-            },
-            // advanced group
-            {
-              groupName: strings.AdvancedGroupName,
-              isCollapsed: true,
-              groupFields: [
-                PropertyPaneLabel('convertFromUTC', {
-                  text: strings.ConvertFromUTCFieldDescription
-                }),
-                // Convert from UTC toggle
-                PropertyPaneToggle("convertFromUTC", {
-                  key: "convertFromUTCFieldId",
-                  label: strings.ConvertFromUTCLabel,
-                  onText: strings.ConvertFromUTCOptionYes,
-                  offText: strings.ConvertFromUTCOptionNo,
-                  checked: convertFromUTC,
-                }),
-                PropertyPaneLabel('useCORS', {
-                  text: strings.UseCorsFieldDescription
-                }),
-                // use CORS toggle
-                PropertyFieldToggleWithCallout("useCORS", {
-                  disabled: isMock,
-                  calloutTrigger: CalloutTriggers.Hover,
-                  key: "useCORSFieldId",
-                  label: strings.UseCORSFieldLabel,
-                  //calloutWidth: 200,
-                  calloutContent: React.createElement("p", {}, isMock ? strings.UseCORSFieldCalloutDisabled : strings.UseCORSFieldCallout),
-                  onText: strings.CORSOn,
-                  offText: strings.CORSOff,
-                  checked: useCORS
-                }),
-                // cache duration slider
-                PropertyFieldSliderWithCallout("cacheDuration", {
-                  calloutContent: React.createElement("div", {}, strings.CacheDurationFieldCallout),
-                  calloutTrigger: CalloutTriggers.Hover,
-                  calloutWidth: 200,
-                  key: "cacheDurationFieldId",
-                  label: strings.CacheDurationFieldLabel,
-                  max: 1440,
-                  min: 0,
-                  step: 15,
-                  showValue: true,
-                  value: cacheDuration
-                }),
-                PropertyFieldNumber("maxTotal", {
-                  key: "maxTotalFieldId",
-                  label: strings.MaxTotalFieldLabel,
-                  description: strings.MaxTotalFieldDescription,
-                  value: maxTotal,
-                  minValue: 0,
-                  disabled: false
-                })
-              ],
-            }*/
+            }
           ]
         }
       ]
@@ -307,7 +191,9 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
           CacheDuration,
           DateRange,
           ConvertFromUTC,
-          MaxTotal
+          MaxTotal,
+          FeedColor,
+          DisplayName
         } = providers[i];
 
         let providerItem: any = this._providerList.filter(p => p.key === FeedType)[0];
@@ -327,6 +213,8 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
         provider.EventRange = new CalendarEventRange(DateRange);
         provider.ConvertFromUTC = ConvertFromUTC;
         provider.MaxTotal = MaxTotal;
+        provider.Color = FeedColor;
+        provider.DisplayName = DisplayName;
         dataProviders.push(provider);
       }
     }

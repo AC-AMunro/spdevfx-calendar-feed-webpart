@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Callout, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IColumn, IDropdownOption, MaskedTextField, PrimaryButton, SelectionMode, Slider, TextField, Toggle } from 'office-ui-fabric-react';
+import { Callout, ColorPicker, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IColumn, Icon, IDropdownOption, MaskedTextField, PrimaryButton, SelectionMode, Slider, TextField, Toggle, TooltipHost } from 'office-ui-fabric-react';
 
 import * as strings from "CalendarFeedWebPartStrings";
 
@@ -26,7 +26,8 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
             DateRange: DateRange.Year,
             UseCORS: false,
             CacheDuration: 60,
-            ConvertFromUTC: false
+            ConvertFromUTC: false,
+            FeedColor: '#000000'
         };
     }
 
@@ -67,6 +68,8 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
             { key: DateRange.Year, text: strings.DateRangeOptionUpcoming },
         ];
 
+        const isMock: boolean = this.state.FeedType === CalendarServiceProviderType.Mock;
+
         return (
             <Dialog dialogContentProps={{
                     type: DialogType.normal,
@@ -81,31 +84,46 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
                     onChange={(e, newValue?) => this.setState({ FeedType: CalendarServiceProviderType[newValue.key] })}
                     selectedKey={this.state.FeedType}
                 />
-                <TextField id="feedUrlField" label={strings.FeedUrlFieldLabel} placeholder="https://"
+                <TextField id="feedDisplayNameField" label={strings.FeedDisplayNameFieldLabel}
+                    onChange={(e, newValue?) => this.setState({ DisplayName: newValue }) }
+                    defaultValue={this.state.DisplayName}
+                />
+                {!isMock ? <TextField id="feedUrlField" label={strings.FeedUrlFieldLabel} placeholder="https://"
                     onChange={(e, newValue?) => this.setState({ FeedUrl: newValue }) }
                     defaultValue={this.state.FeedUrl}
                     onGetErrorMessage={this._validateFeedUrl.bind(this)}
-                />
-                <Callout target="#feedUrlField" hidden={false}>
-                    <div>{strings.FeedUrlCallout}</div>
-                </Callout>
+                /> : null }
                 <Dropdown label={strings.DateRangeFieldLabel}
                     options={dateRangeOptions}
                     onChange={(e, newValue?) => { this.setState({ DateRange: DateRange[newValue.key] }); } }
                     selectedKey={DateRange[this.state.DateRange]}
                 />
-                <Toggle label={strings.ConvertFromUTCLabel}
+                <Toggle label={
+                    <div>
+                        {strings.ConvertFromUTCLabel}{' '}
+                        <TooltipHost content={strings.ConvertFromUTCFieldDescription}>
+                            <Icon iconName="Info" aria-label="Info tooltip" />
+                        </TooltipHost>
+                    </div>
+                    }
                     onText={strings.ConvertFromUTCOptionYes}
                     offText={strings.ConvertFromUTCOptionNo}
                     onChange={(e, newValue?) => this.setState({ ConvertFromUTC: newValue }) }
                     defaultChecked={this.state.ConvertFromUTC}
                 />
-                <Toggle label={strings.UseCORSFieldLabel}
+                {!isMock ? <Toggle label={
+                    <div>
+                        {strings.UseCORSFieldLabel}{' '}
+                        <TooltipHost content={strings.UseCorsFieldDescription}>
+                            <Icon iconName="Info" aria-label="Info tooltip" />
+                        </TooltipHost>
+                    </div>
+                    }
                     onText={strings.CORSOn}
                     offText={strings.CORSOff}
                     onChange={(e, newValue?) => this.setState({ UseCORS: newValue }) }
                     defaultChecked={this.state.UseCORS}
-                />
+                /> : null}
                 <Slider label={strings.CacheDurationFieldLabel} max={1440} min={0} step={15} showValue
                     onChange={(newValue) => this.setState({ CacheDuration: newValue }) }
                     defaultValue={this.state.CacheDuration}
@@ -113,7 +131,9 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
                 <TextField label={strings.MaxTotalFieldLabel}
                     onChange={(e, newValue?) => this.setState({ MaxTotal: parseInt(newValue) }) }
                     defaultValue={this.state.MaxTotal.toString()}
+                    description={strings.MaxTotalFieldDescription}
                 />
+                <ColorPicker onChange={(ev, newValue) => this.setState({ FeedColor: '#'+newValue.hex }) } color={this.state.FeedColor} />
                 <DialogFooter>
                     <PrimaryButton onClick={() => { this.props.OnSave(this.state); this.props.OnDismiss(); }} text="Save" />
                     {this.props.SelectedFeed ? <DefaultButton onClick={() => { this.props.OnDelete(this.state); this.props.OnDismiss(); }} text="Delete" /> : null }
