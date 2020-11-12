@@ -56,17 +56,17 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
    */
   public componentDidUpdate(prevProps: ICalendarFeedProps, prevState: ICalendarFeedState): void {
     // only reload if the provider info has changed
-    const prevProvider: ICalendarService = prevProps.provider;
-    const currProvider: ICalendarService = this.props.provider;
+    const prevProviders: ICalendarService[] = prevProps.providers;
+    const currProviders: ICalendarService[] = this.props.providers;
 
     // if there isn't a current provider, do nothing
-    if (currProvider === undefined) {
+    if (currProviders === undefined) {
       return;
     }
 
     // if we didn't have a provider and now we do, we definitely need to update
-    if (prevProvider === undefined) {
-      if (currProvider !== undefined) {
+    if (prevProviders === undefined) {
+      if (currProviders !== undefined) {
         this._loadEvents(false);
       }
 
@@ -74,14 +74,27 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
       return;
     }
 
-    const settingsHaveChanged: boolean = prevProvider.CacheDuration !== currProvider.CacheDuration ||
-      prevProvider.Name !== currProvider.Name ||
-      prevProvider.FeedUrl !== currProvider.FeedUrl ||
-      prevProvider.Name !== currProvider.Name ||
-      prevProvider.EventRange.DateRange !== currProvider.EventRange.DateRange ||
-      prevProvider.UseCORS !== currProvider.UseCORS ||
-      prevProvider.MaxTotal !== currProvider.MaxTotal ||
-      prevProvider.ConvertFromUTC !== currProvider.ConvertFromUTC;
+    var settingsHaveChanged: boolean = prevProviders.length != currProviders.length;
+
+    if(!settingsHaveChanged) {
+      for(var o; o < prevProviders.length; ++o) {
+        for(var n; n < currProviders.length; ++o) {
+          const prevProvider: ICalendarService = prevProviders[o];
+          const currProvider: ICalendarService = currProviders[n];
+
+          settingsHaveChanged = prevProvider.CacheDuration !== currProvider.CacheDuration ||
+            prevProvider.Name !== currProvider.Name ||
+            prevProvider.FeedUrl !== currProvider.FeedUrl ||
+            prevProvider.Name !== currProvider.Name ||
+            prevProvider.EventRange.DateRange !== currProvider.EventRange.DateRange ||
+            prevProvider.UseCORS !== currProvider.UseCORS ||
+            prevProvider.MaxTotal !== currProvider.MaxTotal ||
+            prevProvider.ConvertFromUTC !== currProvider.ConvertFromUTC;
+          
+          if(settingsHaveChanged) break;
+        }
+      }
+    }
 
     if (settingsHaveChanged) {
       // only load from cache if the providers haven't changed, otherwise reload.
@@ -319,45 +332,50 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
    */
   private _renderError(): JSX.Element {
     const { error } = this.state;
-    const { provider } = this.props;
+    const { providers } = this.props;
+
     let errorMsg: string = strings.ErrorMessage;
-    switch (error) {
-      case "Not Found":
-        errorMsg = strings.ErrorNotFound;
-        break;
-      case "Failed to fetch":
-        if (!provider.UseCORS) {
-          // maybe it is because of mixed content?
-          if (provider.FeedUrl.toLowerCase().substr(0, 7) === "http://") {
-            errorMsg = strings.ErrorMixedContent;
+
+    providers.forEach(provider => {
+      
+      switch (error) {
+        case "Not Found":
+          errorMsg = strings.ErrorNotFound;
+          break;
+        case "Failed to fetch":
+          if (!provider.UseCORS) {
+            // maybe it is because of mixed content?
+            if (provider.FeedUrl.toLowerCase().substr(0, 7) === "http://") {
+              errorMsg = strings.ErrorMixedContent;
+            } else {
+              errorMsg = strings.ErrorFailedToFetchNoProxy;
+            }
           } else {
-            errorMsg = strings.ErrorFailedToFetchNoProxy;
+            errorMsg = strings.ErrorFailedToFetch;
           }
-        } else {
-          errorMsg = strings.ErrorFailedToFetch;
-        }
-        break;
-      default:
-        // specific provider messages
-        if (provider.Name === CalendarServiceProviderType.RSS) {
-          switch (error) {
-            case "No result":
-              errorMsg = strings.ErrorRssNoResult;
-              break;
-            case "No root":
-              errorMsg = strings.ErrorRssNoRoot;
-              break;
-            case "No channel":
-              errorMsg = strings.ErrorRssNoChannel;
-              break;
+          break;
+        default:
+          // specific provider messages
+          if (provider.Name === CalendarServiceProviderType.RSS) {
+            switch (error) {
+              case "No result":
+                errorMsg = strings.ErrorRssNoResult;
+                break;
+              case "No root":
+                errorMsg = strings.ErrorRssNoRoot;
+                break;
+              case "No channel":
+                errorMsg = strings.ErrorRssNoChannel;
+                break;
+            }
+          } else if (provider.Name === CalendarServiceProviderType.iCal &&
+            error.indexOf("Unable to get property 'property' of undefined or null reference") !== -1) {
+            errorMsg = strings.ErrorInvalidiCalFeed;
+          } else if (provider.Name === CalendarServiceProviderType.WordPress && error.indexOf("Failed to read") !== -1) {
+            errorMsg = strings.ErrorInvalidWordPressFeed;
           }
-        } else if (provider.Name === CalendarServiceProviderType.iCal &&
-          error.indexOf("Unable to get property 'property' of undefined or null reference") !== -1) {
-          errorMsg = strings.ErrorInvalidiCalFeed;
-        } else if (provider.Name === CalendarServiceProviderType.WordPress && error.indexOf("Failed to read") !== -1) {
-          errorMsg = strings.ErrorInvalidWordPressFeed;
-        }
-    }
+      }
+    });
 
     return (<div className={styles.errorMessage} >
       <div className={styles.moreDetails}>
@@ -377,98 +395,102 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
    * Load events from the cache or, if expired, load from the event provider
    */
   private async _loadEvents(useCacheIfPossible: boolean): Promise<void> {
-    const { Name, FeedUrl } = this.props.provider;
-    const FullCacheKey = CacheKey + ":" + FeedUrl;
+    const { providers } = this.props;
 
-    if(this.props.provider.Name === CalendarServiceProviderType.Mock || this.props.provider.CacheDuration == 0) {
-      useCacheIfPossible = false;
-    }
+    for(const provider of providers) {
+      const { Name, FeedUrl } = provider;
+      const FullCacheKey = CacheKey + ":" + FeedUrl;
 
-    // before we do anything with the data provider, let's make sure that we don't have stuff stored in the cache
-    // load from cache if: 1) we said to use cache, and b) if we have something in cache
-    if (useCacheIfPossible && localStorage.getItem(FullCacheKey)) {
+      if(provider.Name === CalendarServiceProviderType.Mock || provider.CacheDuration == 0) {
+        useCacheIfPossible = false;
+      }
 
-      // RegEx for matching dates
-      var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
-      var reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
-      
-      // Parser for field data, turn string dates into Date objects
-      let cacheParser = (key, value) => {
-          if ((key === 'start' || key === 'end') && typeof value === 'string') {
-              var a = reISO.exec(value);
-              if (a)
-                  return new Date(value);
-              a = reMsAjax.exec(value);
-              if (a) {
-                  var b = a[1].split(/[-+,.]/);
-                  return new Date(b[0] ? +b[0] : 0 - +b[1]);
-              }
+      // before we do anything with the data provider, let's make sure that we don't have stuff stored in the cache
+      // load from cache if: 1) we said to use cache, and b) if we have something in cache
+      if (useCacheIfPossible && localStorage.getItem(FullCacheKey)) {
+
+        // RegEx for matching dates
+        var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
+        var reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
+        
+        // Parser for field data, turn string dates into Date objects
+        let cacheParser = (key, value) => {
+            if ((key === 'start' || key === 'end') && typeof value === 'string') {
+                var a = reISO.exec(value);
+                if (a)
+                    return new Date(value);
+                a = reMsAjax.exec(value);
+                if (a) {
+                    var b = a[1].split(/[-+,.]/);
+                    return new Date(b[0] ? +b[0] : 0 - +b[1]);
+                }
+            }
+            return value;
+        };
+
+        // parse the stored JSON with our cacheParser
+        let feedCache: IFeedCache = JSON.parse(localStorage.getItem(FullCacheKey), cacheParser);
+
+        if (provider.MaxTotal > 0) {
+          feedCache.events = feedCache.events.slice(0, provider.MaxTotal);
+        }
+
+        //const { Name, FeedUrl } = this.props.provider;
+        const cacheStillValid: boolean = moment().isBefore(feedCache.expiry);
+
+        // make sure the cache hasn't expired or that the settings haven't changed
+        if (cacheStillValid && feedCache.feedType === Name && feedCache.feedUrl === FeedUrl) {
+          this.setState({
+            isLoading: false,
+            error: undefined,
+            events: feedCache.events
+          });
+          return;
+        }
+      }
+
+      // nothing in cache, load fresh
+      if (provider) {
+        this.setState({
+          isLoading: true
+        });
+
+        try {
+          let events = await provider.getEvents();
+
+          if(useCacheIfPossible) {
+            const cache: IFeedCache = {
+              expiry: moment().add(provider.CacheDuration, "minutes"),
+              feedType: Name,
+              feedUrl: FeedUrl,
+              events: events
+            };
+
+            localStorage.setItem(FullCacheKey, JSON.stringify(cache));
           }
-          return value;
-      };
 
-      // parse the stored JSON with our cacheParser
-      let feedCache: IFeedCache = JSON.parse(localStorage.getItem(FullCacheKey), cacheParser);
+          if (provider.MaxTotal > 0) {
+            events = events.slice(0, provider.MaxTotal);
+          }
 
-      if (this.props.provider.MaxTotal > 0) {
-        feedCache.events = feedCache.events.slice(0, this.props.provider.MaxTotal);
-      }
-
-      //const { Name, FeedUrl } = this.props.provider;
-      const cacheStillValid: boolean = moment().isBefore(feedCache.expiry);
-
-      // make sure the cache hasn't expired or that the settings haven't changed
-      if (cacheStillValid && feedCache.feedType === Name && feedCache.feedUrl === FeedUrl) {
-        this.setState({
-          isLoading: false,
-          error: undefined,
-          events: feedCache.events
-        });
-        return;
-      }
-    }
-
-    // nothing in cache, load fresh
-    if (this.props.provider) {
-      this.setState({
-        isLoading: true
-      });
-
-      try {
-        let events = await this.props.provider.getEvents();
-
-        if(useCacheIfPossible) {
-          const cache: IFeedCache = {
-            expiry: moment().add(this.props.provider.CacheDuration, "minutes"),
-            feedType: Name,
-            feedUrl: FeedUrl,
+          // don't cache in the case of errors
+          this.setState({
+            isLoading: false,
+            error: undefined,
             events: events
-          };
+          });
 
-          localStorage.setItem(FullCacheKey, JSON.stringify(cache));
+          return;
         }
-
-        if (this.props.provider.MaxTotal > 0) {
-          events = events.slice(0, this.props.provider.MaxTotal);
+        catch (error) {
+          console.log("Exception returned by getEvents", error.message);
+          localStorage.removeItem(FullCacheKey);
+          this.setState({
+            isLoading: false,
+            error: error.message,
+            events: []
+          });
         }
-
-        // don't cache in the case of errors
-        this.setState({
-          isLoading: false,
-          error: undefined,
-          events: events
-        });
-
-        return;
-      }
-      catch (error) {
-        console.log("Exception returned by getEvents", error.message);
-        localStorage.removeItem(FullCacheKey);
-        this.setState({
-          isLoading: false,
-          error: error.message,
-          events: []
-        });
       }
     }
   }

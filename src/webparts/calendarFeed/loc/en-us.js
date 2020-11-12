@@ -1,5 +1,8 @@
 define([], function() {
   return {
+    AddFeedLabel: "Add Feed",
+    EditFeedLabel: "Edit Feed",
+    DeleteLabel: "Delete",
     UseCorsFieldDescription: "If you get a message saying \"Failed to fetch the feed URL you specified.\", try enabling the \"Use proxy\" option.",
     ConvertFromUTCFieldDescription: "If your feed returns Universal Time Coordinated (UTC) events and your events appear at the wrong time zone, try enabling \"Convert from UTC\".",
     ConvertFromUTCOptionNo: "Do not convert",

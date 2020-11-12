@@ -5,7 +5,8 @@ import AddFeedDialog from './AddFeedDialog';
 import { IFeedListProps } from './IFeedListProps';
 import { IFeedListState } from './IFeedListState';
 
-import * as settingsStrings from "CalendarServiceSettingsStrings";
+import * as strings from "CalendarFeedWebPartStrings";
+
 import { ICalendarServiceSettings } from '../../../shared/services/CalendarService/ICalendarServiceSettings';
 
 export default class FeedList extends React.Component<IFeedListProps, IFeedListState> {
@@ -18,8 +19,8 @@ export default class FeedList extends React.Component<IFeedListProps, IFeedListS
         super(props);
 
         this._columns = [
-            { key: 'feedType', name: settingsStrings.FeedTypeFieldLabel, fieldName: 'FeedType', minWidth: 50, maxWidth: 100, isResizable: true },
-            { key: 'feedUrl', name: settingsStrings.FeedUrlFieldLabel, fieldName: 'FeedUrl', minWidth: 100, maxWidth: 200, isResizable: true },
+            { key: 'feedType', name: strings.FeedTypeFieldLabel, fieldName: 'FeedType', minWidth: 50, maxWidth: 100, isResizable: true },
+            { key: 'feedUrl', name: strings.FeedUrlFieldLabel, fieldName: 'FeedUrl', minWidth: 100, maxWidth: 200, isResizable: true },
             { key: 'edit', name: '', fieldName: 'edit', minWidth:25, isResizable: false },
             { key: 'delete', name: '', fieldName: 'delete', minWidth: 25, isResizable: false }
         ];
@@ -44,7 +45,7 @@ export default class FeedList extends React.Component<IFeedListProps, IFeedListS
                 />
 
                 <PrimaryButton
-                    text={settingsStrings.AddFeed}
+                    text={strings.AddFeedLabel}
                     onClick={() => this.setState({ feedPropertiesDialogIsOpen: true, selectedFeed: null })}
                 />
 
@@ -57,10 +58,10 @@ export default class FeedList extends React.Component<IFeedListProps, IFeedListS
 
     private handleRenderItemColumn = (item: ICalendarServiceSettings, index: number, column: IColumn) : JSX.Element => {
         if(column.fieldName === 'edit') {
-            return <IconButton iconProps={this.editIcon} title="Edit" ariaLabel="Edit" onClick={() => this.setState({ feedPropertiesDialogIsOpen: true, selectedFeed: item })} />;
+            return <IconButton iconProps={this.editIcon} title={strings.EditFeedLabel} ariaLabel={strings.EditFeedLabel} onClick={() => this.setState({ feedPropertiesDialogIsOpen: true, selectedFeed: item })} />;
         }
         else if(column.fieldName === 'delete') {
-            return <IconButton iconProps={this.deleteIcon} title="Delete" ariaLabel="Delete" onClick={() => this.handleDelete(item)} />;
+            return <IconButton iconProps={this.deleteIcon} title={strings.DeleteLabel} ariaLabel={strings.DeleteLabel} onClick={() => this.handleDelete(item)} />;
         }
 
         return item[column.fieldName];
@@ -68,10 +69,12 @@ export default class FeedList extends React.Component<IFeedListProps, IFeedListS
 
     private handleDelete = (item: ICalendarServiceSettings) => {
         const items = [...this.state.items];
-        if(items.length > 0) {
+        if(items.length > 0 && items.indexOf(item) != -1) {
             items.splice(items.indexOf(item), 1);
         }
-        this.setState({ items: items, feedPropertiesDialogIsOpen: false, selectedFeed: null });
+        this.setState({ items: items, feedPropertiesDialogIsOpen: false, selectedFeed: null }, () => {
+            this.props.onChange(this.state.items);
+        });
     }
 
     private handleSave = (item: ICalendarServiceSettings) => {
@@ -100,6 +103,8 @@ export default class FeedList extends React.Component<IFeedListProps, IFeedListS
             };
         }
         
-        this.setState({ items: items, feedPropertiesDialogIsOpen: false, selectedFeed: null });
+        this.setState({ items: items, feedPropertiesDialogIsOpen: false, selectedFeed: null }, () => {
+            this.props.onChange(this.state.items);
+        });
     }
 }

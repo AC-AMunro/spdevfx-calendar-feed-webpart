@@ -20,7 +20,7 @@ export interface ICalendarFeedProps {
   context: WebPartContext;
   updateProperty: (value: string) => void;
   isConfigured: boolean;
-  provider: ICalendarService;
+  providers: ICalendarService[];
   themeVariant: IReadonlyTheme;
   clientWidth: number;
 }

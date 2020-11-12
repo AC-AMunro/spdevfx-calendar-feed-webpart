@@ -1,4 +1,7 @@
 declare interface ICalendarFeedWebPartStrings {
+  AddFeedLabel: string;
+  EditFeedLabel: string;
+  DeleteLabel: string;
   UseCorsFieldDescription: string;
   ConvertFromUTCFieldDescription: string;
   ConvertFromUTCOptionNo: string;

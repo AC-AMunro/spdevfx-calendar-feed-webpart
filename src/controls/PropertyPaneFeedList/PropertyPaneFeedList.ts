@@ -20,6 +20,7 @@ export class PropertyPaneFeedList implements IPropertyPaneField<IPropertyPaneFee
         this.properties = {
             key: properties.label,
             label: properties.label,
+            providers: properties.providers,
             onRender: this.onRender.bind(this),
             onDispose: this.onDispose.bind(this)
         };
@@ -36,13 +37,15 @@ export class PropertyPaneFeedList implements IPropertyPaneField<IPropertyPaneFee
     private onDispose(element: HTMLElement): void {
         ReactDom.unmountComponentAtNode(element);
     }
-
-    private onRender(elem: HTMLElement): void {
+    private onRender(elem: HTMLElement, context?: any, changeCallback?: (targetProperty?: string, newValue?: any) => void): void {
         if(!this.elem) {
             this.elem = elem;
         }
 
-        const element: React.ReactElement<IFeedListProps> = React.createElement(FeedList);
+        const element: React.ReactElement<IFeedListProps> = React.createElement(FeedList, {
+            items: this.properties.providers,
+            onChange: (newValue) => changeCallback(this.targetProperty, newValue)
+        });
         ReactDom.render(element, elem);
     }
 }

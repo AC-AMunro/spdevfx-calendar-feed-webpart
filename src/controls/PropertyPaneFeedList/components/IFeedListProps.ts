@@ -2,4 +2,5 @@ import { ICalendarServiceSettings } from "../../../shared/services/CalendarServi
 
 export interface IFeedListProps {
     items: ICalendarServiceSettings[];
+    onChange: (newValue) => void;
 }

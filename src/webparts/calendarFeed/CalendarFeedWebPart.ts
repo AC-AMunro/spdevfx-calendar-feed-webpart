@@ -111,7 +111,7 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
         displayMode: this.displayMode,
         context: this.context,
         isConfigured: this._isConfigured(),
-        provider: this._getDataProvider(),
+        providers: this._getDataProviders(),
         themeVariant: this._themeVariant,
         updateProperty: (value: string) => {
           this.properties.title = value;
@@ -163,14 +163,15 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
           },
           groups: [
             {
-              groupName: "providers",
+              groupName: "Providers",
               groupFields: [
-                new PropertyPaneFeedList("Providers", {
-                  label: "Providers"
+                new PropertyPaneFeedList("providers", {
+                  label: "Providers",
+                  providers: this.properties.providers
                 })
               ]
             },
-            {
+            /*{
               groupName: strings.FeedSettingsGroupName,
               groupFields: [
                 // feed type drop down. Add your own types in the drop-down list
@@ -257,7 +258,7 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
                   disabled: false
                 })
               ],
-            }
+            }*/
           ]
         }
       ]
@@ -285,84 +286,52 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
    * Returns true if the web part is configured and ready to show events. If it returns false, we'll show the configuration placeholder.
    */
   private _isConfigured(): boolean {
-    const { feedUrl, feedType } = this.properties;
+    const { providers } = this.properties;
 
-    // see if web part has a feed type configured
-    const hasFeedType: boolean = feedType !== null
-      && feedType !== undefined;
-
-    // Mock feeds don't need anything else
-    if (feedType === CalendarServiceProviderType.Mock) {
-      return true;
-    }
-
-    // see if web part has a feed url configured
-    const hasFeedUrl: boolean = feedUrl !== null
-      && feedUrl !== undefined
-      && feedUrl !== "";
-
-
-    // if we have a feed url and a feed type, we are configured
-    return hasFeedUrl && hasFeedType;
-  }
-
-  /**
-   * Validates a URL when users type them in the configuration pane.
-   * @param feedUrl The URL to validate
-   */
-  private _validateFeedUrl(feedUrl: string): string {
-    if (this.properties.feedType === CalendarServiceProviderType.Mock) {
-      // we don't need a URL for mock feeds
-      return '';
-    }
-
-    // Make sure the feed isn't empty or null
-    if (feedUrl === null ||
-      feedUrl.trim().length === 0) {
-      return strings.FeedUrlValidationNoUrl;
-    }
-
-    if (!feedUrl.match(/(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/)) {
-      return strings.FeedUrlValidationInvalidFormat;
-    }
-
-    // No errors
-    return '';
+    return providers && providers.length > 0;
   }
 
   /**
    * Initialize a feed data provider from the list of existing providers
    */
-  private _getDataProvider(): ICalendarService {
-    const {
-      feedUrl,
-      useCORS,
-      cacheDuration,
-      convertFromUTC,
-      maxTotal
-    } = this.properties;
+  private _getDataProviders(): ICalendarService[] {
+    const { providers } = this.properties;
+    let dataProviders: ICalendarService[] = [];
 
-    // get the first provider matching the type selected
-    let providerItem: any = this._providerList.filter(p => p.key === this.properties.feedType)[0];
+    if(providers) {
+      for(var i = 0; i < providers.length; ++i) {
+        const {
+          FeedType,
+          FeedUrl,
+          UseCORS,
+          CacheDuration,
+          DateRange,
+          ConvertFromUTC,
+          MaxTotal
+        } = providers[i];
 
-    // make sure we got a valid provider
-    if (!providerItem) {
-      // return nothing. This should only happen if we removed a provider that we used to support or changed our provider keys
-      return undefined;
+        let providerItem: any = this._providerList.filter(p => p.key === FeedType)[0];
+
+        // make sure we got a valid provider
+        if (!providerItem) {
+          // return nothing. This should only happen if we removed a provider that we used to support or changed our provider keys
+          continue;
+        }
+
+        let provider: ICalendarService = providerItem.initialize();
+        // pass props
+        provider.Context = this.context;
+        provider.FeedUrl = FeedUrl;
+        provider.UseCORS = UseCORS;
+        provider.CacheDuration = CacheDuration;
+        provider.EventRange = new CalendarEventRange(DateRange);
+        provider.ConvertFromUTC = ConvertFromUTC;
+        provider.MaxTotal = MaxTotal;
+        dataProviders.push(provider);
+      }
     }
 
-    // get an instance
-    let provider: ICalendarService = providerItem.initialize();
-
-    // pass props
-    provider.Context = this.context;
-    provider.FeedUrl = feedUrl;
-    provider.UseCORS = useCORS;
-    provider.CacheDuration = cacheDuration;
-    provider.EventRange = new CalendarEventRange(this.properties.dateRange);
-    provider.ConvertFromUTC = convertFromUTC;
-    provider.MaxTotal = maxTotal;
-    return provider;
+    return dataProviders;
   }
 
   /**

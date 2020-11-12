@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IColumn, IDropdownOption, MaskedTextField, PrimaryButton, SelectionMode, Slider, TextField, Toggle } from 'office-ui-fabric-react';
+import { Callout, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IColumn, IDropdownOption, MaskedTextField, PrimaryButton, SelectionMode, Slider, TextField, Toggle } from 'office-ui-fabric-react';
 
-import * as settingsStrings from "CalendarServiceSettingsStrings";
+import * as strings from "CalendarFeedWebPartStrings";
 
 import { IAddFeedDialogProps } from './IAddFeedDialogProps';
 import { IAddFeedDialogState } from './IAddFeedDialogState';
 import { CalendarServiceProviderList, CalendarServiceProviderType, DateRange } from '../../../shared/services/CalendarService';
+import styles from './AddFeedDialog.module.scss';
+import { PropertyPaneTextField } from '@microsoft/sp-property-pane';
 
 export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, IAddFeedDialogState> {
     private _providerList: any[];
@@ -28,58 +30,93 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
         };
     }
 
+    /**
+   * Validates a URL when users type them in the configuration pane.
+   * @param feedUrl The URL to validate
+   */
+    private _validateFeedUrl(feedUrl: string): string {
+        if (this.state.FeedType === CalendarServiceProviderType.Mock) {
+            // we don't need a URL for mock feeds
+            return '';
+        }
+
+        // Make sure the feed isn't empty or null
+        if (feedUrl === null ||
+            feedUrl.trim().length === 0) {
+            return strings.FeedUrlValidationNoUrl;
+        }
+
+        if (!feedUrl.match(/(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/)) {
+            return strings.FeedUrlValidationInvalidFormat;
+        }
+
+        // No errors
+        return '';
+    }
+
     public render(): JSX.Element {
         const feedTypeOptions = this._providerList.map(provider => {
             return { key: provider.key, text: provider.label };
         });
         
         const dateRangeOptions = [
-            { key: DateRange.OneWeek, text: settingsStrings.DateRangeOptionWeek },
-            { key: DateRange.TwoWeeks, text: settingsStrings.DateRangeOptionTwoWeeks },
-            { key: DateRange.Month, text: settingsStrings.DateRangeOptionMonth },
-            { key: DateRange.Quarter, text: settingsStrings.DateRangeOptionQuarter },
-            { key: DateRange.Year, text: settingsStrings.DateRangeOptionUpcoming },
+            { key: DateRange.OneWeek, text: strings.DateRangeOptionWeek },
+            { key: DateRange.TwoWeeks, text: strings.DateRangeOptionTwoWeeks },
+            { key: DateRange.Month, text: strings.DateRangeOptionMonth },
+            { key: DateRange.Quarter, text: strings.DateRangeOptionQuarter },
+            { key: DateRange.Year, text: strings.DateRangeOptionUpcoming },
         ];
 
         return (
-            <Dialog hidden={false} title={(this.props.SelectedFeed) ? settingsStrings.EditFeed : settingsStrings.AddFeed} type={DialogType.normal} onDismiss={this.props.OnDismiss}>
-                <Dropdown label={settingsStrings.FeedTypeFieldLabel}
+            <Dialog dialogContentProps={{
+                    type: DialogType.normal,
+                    title: (this.props.SelectedFeed) ? strings.EditFeedLabel : strings.AddFeedLabel,
+                }}
+                modalProps={{
+                    containerClassName: 'ms-dialogMainOverride ' + styles.addFeedDialog
+                }}
+                hidden={false} onDismiss={this.props.OnDismiss}>
+                <Dropdown id="feedTypeField" label={strings.FeedTypeFieldLabel}
                     options={feedTypeOptions}
                     onChange={(e, newValue?) => this.setState({ FeedType: CalendarServiceProviderType[newValue.key] })}
                     selectedKey={this.state.FeedType}
                 />
-                <TextField label={settingsStrings.FeedUrlFieldLabel} placeholder="https://"
+                <TextField id="feedUrlField" label={strings.FeedUrlFieldLabel} placeholder="https://"
                     onChange={(e, newValue?) => this.setState({ FeedUrl: newValue }) }
                     defaultValue={this.state.FeedUrl}
+                    onGetErrorMessage={this._validateFeedUrl.bind(this)}
                 />
-                <Dropdown label={settingsStrings.DateRangeFieldLabel}
+                <Callout target="#feedUrlField" hidden={false}>
+                    <div>{strings.FeedUrlCallout}</div>
+                </Callout>
+                <Dropdown label={strings.DateRangeFieldLabel}
                     options={dateRangeOptions}
                     onChange={(e, newValue?) => { this.setState({ DateRange: DateRange[newValue.key] }); } }
                     selectedKey={DateRange[this.state.DateRange]}
                 />
-                <Toggle label={settingsStrings.ConvertFromUTCLabel}
-                    onText={settingsStrings.ConvertFromUTCOptionYes}
-                    offText={settingsStrings.ConvertFromUTCOptionNo}
+                <Toggle label={strings.ConvertFromUTCLabel}
+                    onText={strings.ConvertFromUTCOptionYes}
+                    offText={strings.ConvertFromUTCOptionNo}
                     onChange={(e, newValue?) => this.setState({ ConvertFromUTC: newValue }) }
                     defaultChecked={this.state.ConvertFromUTC}
                 />
-                <Toggle label={settingsStrings.UseCORSFieldLabel}
-                    onText={settingsStrings.CORSOn}
-                    offText={settingsStrings.CORSOff}
+                <Toggle label={strings.UseCORSFieldLabel}
+                    onText={strings.CORSOn}
+                    offText={strings.CORSOff}
                     onChange={(e, newValue?) => this.setState({ UseCORS: newValue }) }
                     defaultChecked={this.state.UseCORS}
                 />
-                <Slider label={settingsStrings.CacheDurationFieldLabel} max={1440} min={0} step={15} showValue
+                <Slider label={strings.CacheDurationFieldLabel} max={1440} min={0} step={15} showValue
                     onChange={(newValue) => this.setState({ CacheDuration: newValue }) }
                     defaultValue={this.state.CacheDuration}
                 />
-                <TextField label={settingsStrings.MaxTotalFieldLabel}
+                <TextField label={strings.MaxTotalFieldLabel}
                     onChange={(e, newValue?) => this.setState({ MaxTotal: parseInt(newValue) }) }
                     defaultValue={this.state.MaxTotal.toString()}
                 />
                 <DialogFooter>
                     <PrimaryButton onClick={() => { this.props.OnSave(this.state); this.props.OnDismiss(); }} text="Save" />
-                    <DefaultButton onClick={() => { this.props.OnDelete(this.state); this.props.OnDismiss(); }} text="Delete" hidden={this.props.SelectedFeed==null} />
+                    {this.props.SelectedFeed ? <DefaultButton onClick={() => { this.props.OnDelete(this.state); this.props.OnDismiss(); }} text="Delete" /> : null }
                 </DialogFooter>
             </Dialog>
         );

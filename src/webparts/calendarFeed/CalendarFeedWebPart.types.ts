@@ -1,4 +1,5 @@
 import { DateRange, CalendarServiceProviderType } from "../../shared/services/CalendarService";
+import { ICalendarServiceSettings } from "../../shared/services/CalendarService/ICalendarServiceSettings";
 
 /**
  * Web part properties stored in web part configuration
@@ -43,4 +44,6 @@ export interface ICalendarFeedWebPartProps {
    * Indicates the dates received from feeds do not specify a timezone
    */
   convertFromUTC: boolean;
+
+  providers: ICalendarServiceSettings[];
 }
