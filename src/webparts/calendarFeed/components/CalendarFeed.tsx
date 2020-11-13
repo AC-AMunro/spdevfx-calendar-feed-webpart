@@ -134,9 +134,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
             themeVariant={this.props.themeVariant}
           />
         </div>
-        <div className={styles.container}>
-          {this._renderContent()}
-        </div>
+        {this._renderContent()}
       </div>
     );
   }
@@ -273,10 +271,10 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
     const hasErrors: boolean = error !== undefined;
     const hasEvents: boolean = events.length > 0;
 
-    if (isLoading) {
+    /*if (isLoading) {
       // we're currently loading
       return (<div className={styles.spinner}><Spinner label={strings.Loading} /></div>);
-    }
+    }*/
 
     if (hasErrors) {
       // we're done loading but got some errors
@@ -289,40 +287,38 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
       }
     }
 
-    if (!hasEvents) {
-      // we're done loading, no errors, but have no events
-      return (<div className={styles.emptyMessage}>{strings.NoEventsMessage}</div>);
-    }
-
     return (
       <>
-        <Calendar
-          dayPropGetter={this.dayPropGetter}
-          localizer={localizer}
-          selectable
-          events={this.state.events}
-          startAccessor="start"
-          endAccessor="end"
-          eventPropGetter={this.eventStyleGetter}
-          components={{
-            event: this.renderEvent
-          }}
-          defaultDate={moment().startOf('day').toDate()}
-          messages={
-            {
-              'today': strings.TodayLabel,
-              'previous': strings.PreviousLabel,
-              'next': strings.NextLabel,
-              'month': strings.MonthLabel,
-              'week': strings.WeekLabel,
-              'day': strings.DayLabel,
-              'showMore': total => `+${total} ${strings.ShowMore}`
+        <div className={styles.container}>
+          {(isLoading) ? <div className={styles.spinnerContainer}><Spinner label={strings.Loading} className={styles.spinner} /></div> : null}
+          {(!isLoading && !hasEvents) ? <div className={styles.emptyMessage}>{strings.NoEventsMessage}</div> : null }
+          <Calendar
+            dayPropGetter={this.dayPropGetter}
+            localizer={localizer}
+            selectable
+            events={this.state.events}
+            startAccessor="start"
+            endAccessor="end"
+            eventPropGetter={this.eventStyleGetter}
+            components={{
+              event: this.renderEvent
+            }}
+            defaultDate={moment().startOf('day').toDate()}
+            messages={
+              {
+                'today': strings.TodayLabel,
+                'previous': strings.PreviousLabel,
+                'next': strings.NextLabel,
+                'month': strings.MonthLabel,
+                'week': strings.WeekLabel,
+                'day': strings.DayLabel,
+                'showMore': total => `+${total} ${strings.ShowMore}`
+              }
             }
-          }
-        />
+          />
+        </div>
         <ul className={styles.legend}>
           {this.props.providers.map((provider:ICalendarService, idx) => {
-            console.log(provider);
             if (provider.DisplayName) return <li key={idx} style={{ borderColor: provider.Color }}>{provider.DisplayName}</li>;
           })}
         </ul>
@@ -409,7 +405,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
       isLoading: true,
       error: undefined,
       events: []
-    })
+    });
 
     for(const provider of providers) {
       const { Name, FeedUrl } = provider;
@@ -457,9 +453,9 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
         // nothing in cache, load fresh
         if (provider) {
           try {
-            let events = await provider.getEvents();
+            let providerEvents = await provider.getEvents();
 
-            events.map((event) => {
+            providerEvents.map((event) => {
               if(provider.Color) event.color = provider.Color;
               
               return event;
@@ -472,17 +468,17 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
                 expiry: moment().add(provider.CacheDuration, "minutes"),
                 feedType: Name,
                 feedUrl: FeedUrl,
-                events: events
+                events: providerEvents
               };
 
               localStorage.setItem(FullCacheKey, JSON.stringify(cache));
             }
 
             if (provider.MaxTotal > 0) {
-              events = events.slice(0, provider.MaxTotal);
+              providerEvents = providerEvents.slice(0, provider.MaxTotal);
             }
 
-            events.push(...events);
+            events.push(...providerEvents);
           }
           catch (error) {
             console.log("Exception returned by getEvents", error.message);
@@ -497,10 +493,12 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
       }
     }
 
+    console.log(events);
+
     this.setState({
       isLoading: false,
       error: error,
-      events: events
+      events: [...events]
     });
   }
 }

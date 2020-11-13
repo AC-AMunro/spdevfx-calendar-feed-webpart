@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Callout, ColorPicker, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IColumn, Icon, IDropdownOption, MaskedTextField, PrimaryButton, SelectionMode, Slider, TextField, Toggle, TooltipHost } from 'office-ui-fabric-react';
+import { Callout, ColorPicker, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IColumn, Icon, IDropdownOption, Label, MaskedTextField, PrimaryButton, SelectionMode, Slider, TextField, Toggle, TooltipHost } from 'office-ui-fabric-react';
 
 import * as strings from "CalendarFeedWebPartStrings";
 
@@ -19,6 +19,7 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
 
         this.state = (this.props.SelectedFeed) ? {
             ...this.props.SelectedFeed,
+            showColorPicker: false
         } : {
             FeedType: null,
             FeedUrl: '',
@@ -27,7 +28,8 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
             UseCORS: false,
             CacheDuration: 60,
             ConvertFromUTC: false,
-            FeedColor: '#000000'
+            FeedColor: '#000000',
+            showColorPicker: false
         };
     }
 
@@ -133,7 +135,13 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
                     defaultValue={this.state.MaxTotal.toString()}
                     description={strings.MaxTotalFieldDescription}
                 />
-                <ColorPicker onChange={(ev, newValue) => this.setState({ FeedColor: '#'+newValue.hex }) } color={this.state.FeedColor} />
+                <Label>Color</Label>
+                <div className={styles.colorPickerRect} style={{ backgroundColor: this.state.FeedColor }} onClick={() => this.setState({showColorPicker: !this.state.showColorPicker})}></div>
+                {this.state.showColorPicker ?
+                    <Callout target={`.${styles.colorPickerRect}`}>
+                        <ColorPicker onChange={(ev, newValue) => this.setState({ FeedColor: '#'+newValue.hex }) } color={this.state.FeedColor} />
+                    </Callout>
+                : null }
                 <DialogFooter>
                     <PrimaryButton onClick={() => { this.props.OnSave(this.state); this.props.OnDismiss(); }} text="Save" />
                     {this.props.SelectedFeed ? <DefaultButton onClick={() => { this.props.OnDelete(this.state); this.props.OnDismiss(); }} text="Delete" /> : null }

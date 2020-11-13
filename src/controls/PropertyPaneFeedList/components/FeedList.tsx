@@ -5,6 +5,7 @@ import AddFeedDialog from './AddFeedDialog';
 import { IFeedListProps } from './IFeedListProps';
 import { IFeedListState } from './IFeedListState';
 
+import styles from './FeedList.module.scss';
 import * as strings from "CalendarFeedWebPartStrings";
 
 import { ICalendarServiceSettings } from '../../../shared/services/CalendarService/ICalendarServiceSettings';
@@ -19,10 +20,13 @@ export default class FeedList extends React.Component<IFeedListProps, IFeedListS
         super(props);
 
         this._columns = [
+            { key: 'feedColor', name: '', fieldName: 'FeedColor', minWidth: 16, maxWidth: 16, isResizable: false, onRender: (item:ICalendarServiceSettings, index, column) => {
+               return <div className={styles.colorPickerRect} style={{backgroundColor: item.FeedColor}}></div>;
+            } },
             { key: 'feedType', name: strings.FeedTypeFieldLabel, fieldName: 'FeedType', minWidth: 50, maxWidth: 100, isResizable: true },
             { key: 'feedUrl', name: strings.FeedUrlFieldLabel, fieldName: 'FeedUrl', minWidth: 100, maxWidth: 200, isResizable: true },
-            { key: 'edit', name: '', fieldName: 'edit', minWidth:25, isResizable: false },
-            { key: 'delete', name: '', fieldName: 'delete', minWidth: 25, isResizable: false }
+            { key: 'edit', name: '', fieldName: 'edit', minWidth: 16, maxWidth: 16, isResizable: false },
+            { key: 'delete', name: '', fieldName: 'delete', minWidth: 16, maxWidth: 16, isResizable: false }
         ];
 
         this.state = {

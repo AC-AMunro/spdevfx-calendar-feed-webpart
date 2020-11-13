@@ -2,5 +2,5 @@ import { CalendarServiceProviderType, DateRange } from "../../../shared/services
 import { ICalendarServiceSettings } from "../../../shared/services/CalendarService/ICalendarServiceSettings";
 
 export interface IAddFeedDialogState extends ICalendarServiceSettings {
-  
+  showColorPicker: boolean;
 }

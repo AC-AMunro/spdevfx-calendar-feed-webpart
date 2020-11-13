@@ -3,12 +3,8 @@
 @import "./node_modules/spfx-uifabric-themes/office.theme.vars";
 @import "../../../webparts/themes";
 
-.addFeedDialog {
-  width: 600px;
-}
-
 .colorPickerRect {
-  width: 32px;
-  height: 32px;
+  width: 16px;
+  height: 16px;
   border: 1px solid $ms-color-themeDark;
 }
