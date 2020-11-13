@@ -82,17 +82,17 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
                 <Dropdown id="feedTypeField" label={strings.FeedTypeFieldLabel}
                     options={feedTypeOptions}
                     onChange={(e, newValue?) => this.setState({ FeedType: CalendarServiceProviderType[newValue.key] })}
-                    selectedKey={this.state.FeedType}
+                    selectedKey={this.state.FeedType} disabled={this.props.SelectedFeed != null}
                 />
+                {!isMock ? <TextField id="feedUrlField" label={strings.FeedUrlFieldLabel} placeholder="https://"
+                    onChange={(e, newValue?) => this.setState({ FeedUrl: newValue }) }
+                    defaultValue={this.state.FeedUrl} disabled={this.props.SelectedFeed != null}
+                    onGetErrorMessage={this._validateFeedUrl.bind(this)}
+                /> : null }
                 <TextField id="feedDisplayNameField" label={strings.FeedDisplayNameFieldLabel}
                     onChange={(e, newValue?) => this.setState({ DisplayName: newValue }) }
                     defaultValue={this.state.DisplayName}
                 />
-                {!isMock ? <TextField id="feedUrlField" label={strings.FeedUrlFieldLabel} placeholder="https://"
-                    onChange={(e, newValue?) => this.setState({ FeedUrl: newValue }) }
-                    defaultValue={this.state.FeedUrl}
-                    onGetErrorMessage={this._validateFeedUrl.bind(this)}
-                /> : null }
                 <Dropdown label={strings.DateRangeFieldLabel}
                     options={dateRangeOptions}
                     onChange={(e, newValue?) => { this.setState({ DateRange: DateRange[newValue.key] }); } }

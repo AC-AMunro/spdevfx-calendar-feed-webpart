@@ -60,38 +60,35 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
     const currProviders: ICalendarService[] = this.props.providers;
 
     // if there isn't a current provider, do nothing
-    if (currProviders === undefined) {
+    if (currProviders === undefined || currProviders.length == 0) {
       return;
     }
 
     // if we didn't have a provider and now we do, we definitely need to update
-    if (prevProviders === undefined) {
-      if (currProviders !== undefined) {
+    if (prevProviders === undefined || prevProviders.length == 0) {
+      if (currProviders !== undefined && currProviders.length > 0) {
         this._loadEvents(false);
       }
-
       // there's nothing to do because there isn't a provider
       return;
     }
 
-    var settingsHaveChanged: boolean = prevProviders.length != currProviders.length;
+    let settingsHaveChanged: boolean = prevProviders.length !== currProviders.length;
 
     if(!settingsHaveChanged) {
-      for(var o; o < prevProviders.length; ++o) {
-        for(var n; n < currProviders.length; ++o) {
-          const prevProvider: ICalendarService = prevProviders[o];
-          const currProvider: ICalendarService = currProviders[n];
-
-          settingsHaveChanged = prevProvider.CacheDuration !== currProvider.CacheDuration ||
-            prevProvider.Name !== currProvider.Name ||
-            prevProvider.FeedUrl !== currProvider.FeedUrl ||
-            prevProvider.Name !== currProvider.Name ||
-            prevProvider.EventRange.DateRange !== currProvider.EventRange.DateRange ||
-            prevProvider.UseCORS !== currProvider.UseCORS ||
-            prevProvider.MaxTotal !== currProvider.MaxTotal ||
-            prevProvider.ConvertFromUTC !== currProvider.ConvertFromUTC;
-          
-          if(settingsHaveChanged) break;
+      for(let prevProvider of prevProviders) {
+        for(let currProvider of currProviders) {
+          if(prevProvider.FeedUrl == currProvider.FeedUrl) {
+            if(prevProvider.CacheDuration !== currProvider.CacheDuration ||
+              prevProvider.Name !== currProvider.Name ||
+              prevProvider.FeedUrl !== currProvider.FeedUrl ||
+              prevProvider.EventRange.DateRange !== currProvider.EventRange.DateRange ||
+              prevProvider.UseCORS !== currProvider.UseCORS ||
+              prevProvider.MaxTotal !== currProvider.MaxTotal ||
+              prevProvider.ConvertFromUTC !== currProvider.ConvertFromUTC ||
+              prevProvider.Color !== currProvider.Color ||
+              prevProvider.DisplayName !== currProvider.DisplayName) settingsHaveChanged = true;
+          }
         }
       }
     }
@@ -405,19 +402,22 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
   private async _loadEvents(useCacheIfPossible: boolean): Promise<void> {
     const { providers } = this.props;
 
-    this.setState({ events: []});
+    let events:ICalendarEvent[] = [];
+    let error:string = undefined;
+
+    this.setState({
+      isLoading: true,
+      error: undefined,
+      events: []
+    })
 
     for(const provider of providers) {
       const { Name, FeedUrl } = provider;
-      const FullCacheKey = CacheKey + ":" + FeedUrl;
-
-      if(provider.Name === CalendarServiceProviderType.Mock || provider.CacheDuration == 0) {
-        useCacheIfPossible = false;
-      }
+      let FullCacheKey = CacheKey + ":" + FeedUrl;
 
       // before we do anything with the data provider, let's make sure that we don't have stuff stored in the cache
       // load from cache if: 1) we said to use cache, and b) if we have something in cache
-      if (useCacheIfPossible && localStorage.getItem(FullCacheKey)) {
+      if ((provider.Name !== CalendarServiceProviderType.Mock || provider.CacheDuration != 0) && useCacheIfPossible && localStorage.getItem(FullCacheKey)) {
 
         // RegEx for matching dates
         var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
@@ -446,68 +446,61 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
         }
 
         //const { Name, FeedUrl } = this.props.provider;
-        const cacheStillValid: boolean = moment().isBefore(feedCache.expiry);
+        let cacheStillValid: boolean = moment().isBefore(feedCache.expiry);
 
         // make sure the cache hasn't expired or that the settings haven't changed
-        if (cacheStillValid && feedCache.feedType === Name && feedCache.feedUrl === FeedUrl) {
-          this.setState({
-            isLoading: false,
-            error: undefined,
-            events: [...this.state.events, ...feedCache.events]
-          });
-          continue;
+        if (cacheStillValid && feedCache.feedType == Name && feedCache.feedUrl == FeedUrl) {
+          events.push(...feedCache.events);
+          error = undefined;
         }
-      }
+      } else {
+        // nothing in cache, load fresh
+        if (provider) {
+          try {
+            let events = await provider.getEvents();
 
-      // nothing in cache, load fresh
-      if (provider) {
-        this.setState({
-          isLoading: true
-        });
+            events.map((event) => {
+              if(provider.Color) event.color = provider.Color;
+              
+              return event;
+            });
 
-        try {
-          let events = await provider.getEvents();
+            localStorage.removeItem(FullCacheKey);
 
-          events.map((event) => {
-            if(provider.Color) event.color = provider.Color;
-            
-            return event;
-          });
+            if(provider.CacheDuration > 0) {
+              const cache: IFeedCache = {
+                expiry: moment().add(provider.CacheDuration, "minutes"),
+                feedType: Name,
+                feedUrl: FeedUrl,
+                events: events
+              };
 
-          if(useCacheIfPossible) {
-            const cache: IFeedCache = {
-              expiry: moment().add(provider.CacheDuration, "minutes"),
-              feedType: Name,
-              feedUrl: FeedUrl,
-              events: events
-            };
+              localStorage.setItem(FullCacheKey, JSON.stringify(cache));
+            }
 
-            localStorage.setItem(FullCacheKey, JSON.stringify(cache));
+            if (provider.MaxTotal > 0) {
+              events = events.slice(0, provider.MaxTotal);
+            }
+
+            events.push(...events);
           }
-
-          if (provider.MaxTotal > 0) {
-            events = events.slice(0, provider.MaxTotal);
+          catch (error) {
+            console.log("Exception returned by getEvents", error.message);
+            localStorage.removeItem(FullCacheKey);
+            this.setState({
+              isLoading: false,
+              error: error.message,
+              events: []
+            });
           }
-
-          // don't cache in the case of errors
-          this.setState({
-            isLoading: false,
-            error: undefined,
-            events: [...this.state.events, ...events]
-          });
-
-          continue;
-        }
-        catch (error) {
-          console.log("Exception returned by getEvents", error.message);
-          localStorage.removeItem(FullCacheKey);
-          this.setState({
-            isLoading: false,
-            error: error.message,
-            events: []
-          });
         }
       }
     }
+
+    this.setState({
+      isLoading: false,
+      error: error,
+      events: events
+    });
   }
 }
