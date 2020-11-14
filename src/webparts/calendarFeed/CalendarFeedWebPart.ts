@@ -2,9 +2,7 @@ import * as React from "react";
 import * as ReactDom from "react-dom";
 
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
-import {
-  IPropertyPaneConfiguration, IPropertyPaneDropdownOption, PropertyPaneDropdown, PropertyPaneLabel, PropertyPaneToggle
-} from "@microsoft/sp-property-pane";
+import { IPropertyPaneConfiguration } from "@microsoft/sp-property-pane";
 
 // Needed for data versions
 import { Version } from '@microsoft/sp-core-library';
@@ -26,12 +24,6 @@ import { ICalendarFeedProps } from "./components/CalendarFeed.types";
 // Support for theme variants
 import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
 import { PropertyPaneFeedList } from "../../controls/PropertyPaneFeedList/PropertyPaneFeedList";
-import { ICalendarServiceSettings } from "../../shared/services/CalendarService/ICalendarServiceSettings";
-import { PropertyFieldTextWithCallout } from "@pnp/spfx-property-controls/lib/PropertyFieldTextWithCallout";
-import { CalloutTriggers } from "@pnp/spfx-property-controls/lib/PropertyFieldHeader";
-import { PropertyFieldToggleWithCallout } from "@pnp/spfx-property-controls/lib/PropertyFieldToggleWithCallout";
-import { PropertyFieldSliderWithCallout } from "@pnp/spfx-property-controls/lib/PropertyFieldSliderWithCallout";
-import { PropertyFieldNumber } from "@pnp/spfx-property-controls/lib/PropertyFieldNumber";
 
 /**
  * Calendar Feed Web Part
@@ -144,11 +136,6 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
    * Show the configuration pane
    */
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    // create a drop down of feed providers from our list
-    const feedTypeOptions: IPropertyPaneDropdownOption[] = this._providerList.map(provider => {
-      return { key: provider.key, text: provider.label };
-    });
-
     // migrate from old version to new
     if(this.properties.providers && this.properties.providers.length > 0 && this.properties.feedType != undefined) {
       this.properties.feedType = undefined;

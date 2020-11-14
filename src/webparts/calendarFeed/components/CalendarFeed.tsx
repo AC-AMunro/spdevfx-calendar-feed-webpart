@@ -5,11 +5,10 @@ import * as strings from "CalendarFeedWebPartStrings";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import * as moment from "moment";
 import {
-  FocusZone, FocusZoneDirection, List, Spinner, css,
+  Spinner, css,
   Icon,
-  DocumentCard, DocumentCardTitle, IDocumentCardPreviewProps, DocumentCardPreview, DocumentCardDetails, DocumentCardActivity,
-  IPersonaSharedProps, Persona, PersonaSize, PersonaPresence,
-  HoverCard, HoverCardType, IColor, ImageFit
+  DocumentCard, DocumentCardTitle, IDocumentCardPreviewProps, DocumentCardPreview, DocumentCardDetails,
+  HoverCard, HoverCardType
 } from "office-ui-fabric-react";
 import * as React from "react";
 import { CalendarServiceProviderType, ICalendarEvent, ICalendarService } from "../../../shared/services/CalendarService";
