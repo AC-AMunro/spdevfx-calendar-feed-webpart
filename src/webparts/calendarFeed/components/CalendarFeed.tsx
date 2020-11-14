@@ -289,9 +289,9 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
 
     return (
       <>
+        {(isLoading) ? <div className={styles.spinnerContainer}><Spinner label={strings.Loading} className={styles.spinner} /></div> : null}
+        {(!isLoading && !hasEvents) ? <div className={styles.emptyMessage}>{strings.NoEventsMessage}</div> : null }
         <div className={styles.container}>
-          {(isLoading) ? <div className={styles.spinnerContainer}><Spinner label={strings.Loading} className={styles.spinner} /></div> : null}
-          {(!isLoading && !hasEvents) ? <div className={styles.emptyMessage}>{strings.NoEventsMessage}</div> : null }
           <Calendar
             dayPropGetter={this.dayPropGetter}
             localizer={localizer}
@@ -317,11 +317,12 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
             }
           />
         </div>
+        {this.props.providers.length > 1 ? 
         <ul className={styles.legend}>
           {this.props.providers.map((provider:ICalendarService, idx) => {
             if (provider.DisplayName) return <li key={idx} style={{ borderColor: provider.Color }}>{provider.DisplayName}</li>;
           })}
-        </ul>
+        </ul> : null }
       </>
     );
   }
@@ -399,7 +400,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
     const { providers } = this.props;
 
     let events:ICalendarEvent[] = [];
-    let error:string = undefined;
+    let errorString:string = undefined;
 
     this.setState({
       isLoading: true,
@@ -413,7 +414,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
 
       // before we do anything with the data provider, let's make sure that we don't have stuff stored in the cache
       // load from cache if: 1) we said to use cache, and b) if we have something in cache
-      if ((provider.Name !== CalendarServiceProviderType.Mock || provider.CacheDuration != 0) && useCacheIfPossible && localStorage.getItem(FullCacheKey)) {
+      if ((provider.Name != CalendarServiceProviderType.Mock && provider.CacheDuration > 0) && (useCacheIfPossible && localStorage.getItem(FullCacheKey))) {
 
         // RegEx for matching dates
         var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
@@ -447,7 +448,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
         // make sure the cache hasn't expired or that the settings haven't changed
         if (cacheStillValid && feedCache.feedType == Name && feedCache.feedUrl == FeedUrl) {
           events.push(...feedCache.events);
-          error = undefined;
+          errorString = undefined;
         }
       } else {
         // nothing in cache, load fresh
@@ -481,8 +482,9 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
             events.push(...providerEvents);
           }
           catch (error) {
-            console.log("Exception returned by getEvents", error.message);
+            console.log("Exception returned by getEvents", error.message, FullCacheKey);
             localStorage.removeItem(FullCacheKey);
+            errorString = errorString + ' ' + error.message;
             this.setState({
               isLoading: false,
               error: error.message,
@@ -493,11 +495,9 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
       }
     }
 
-    console.log(events);
-
     this.setState({
       isLoading: false,
-      error: error,
+      error: errorString,
       events: [...events]
     });
   }

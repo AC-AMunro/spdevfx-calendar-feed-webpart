@@ -3,7 +3,7 @@ import * as ReactDom from "react-dom";
 
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 import {
-  IPropertyPaneConfiguration
+  IPropertyPaneConfiguration, IPropertyPaneDropdownOption, PropertyPaneDropdown, PropertyPaneLabel, PropertyPaneToggle
 } from "@microsoft/sp-property-pane";
 
 // Needed for data versions
@@ -13,7 +13,7 @@ import { Version } from '@microsoft/sp-core-library';
 import * as strings from "CalendarFeedWebPartStrings";
 
 // Calendar services
-import { CalendarEventRange, DateRange, ICalendarService } from "../../shared/services/CalendarService";
+import { CalendarEventRange, CalendarServiceProviderType, DateRange, ICalendarService } from "../../shared/services/CalendarService";
 import { CalendarServiceProviderList } from "../../shared/services/CalendarService/CalendarServiceProviderList";
 
 // Web part properties
@@ -26,6 +26,12 @@ import { ICalendarFeedProps } from "./components/CalendarFeed.types";
 // Support for theme variants
 import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
 import { PropertyPaneFeedList } from "../../controls/PropertyPaneFeedList/PropertyPaneFeedList";
+import { ICalendarServiceSettings } from "../../shared/services/CalendarService/ICalendarServiceSettings";
+import { PropertyFieldTextWithCallout } from "@pnp/spfx-property-controls/lib/PropertyFieldTextWithCallout";
+import { CalloutTriggers } from "@pnp/spfx-property-controls/lib/PropertyFieldHeader";
+import { PropertyFieldToggleWithCallout } from "@pnp/spfx-property-controls/lib/PropertyFieldToggleWithCallout";
+import { PropertyFieldSliderWithCallout } from "@pnp/spfx-property-controls/lib/PropertyFieldSliderWithCallout";
+import { PropertyFieldNumber } from "@pnp/spfx-property-controls/lib/PropertyFieldNumber";
 
 /**
  * Calendar Feed Web Part
@@ -55,30 +61,18 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
       // Register a handler to be notified if the theme variant changes
       this._themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent);
 
-      let {
-        cacheDuration,
-        dateRange,
-        maxTotal,
-        convertFromUTC: convertFromUTC
-      } = this.properties;
+      if(this.properties.feedType !== undefined && (this.properties.providers === undefined || this.properties.providers.length == 0)) {
+        if(this.properties.providers == undefined) this.properties.providers = [];
 
-      // make sure to set a default date range if it isn't defined
-      // somehow this is an issue when binding to properties that are enums
-      if (dateRange === undefined) {
-        dateRange = DateRange.Year;
-      }
-
-      if (cacheDuration === undefined) {
-        // default to 15 minutes
-        cacheDuration = 15;
-      }
-
-      if (maxTotal === undefined) {
-        maxTotal = 0;
-      }
-
-      if (convertFromUTC === undefined) {
-        convertFromUTC = false;
+        this.properties.providers.push({
+          FeedType: this.properties.feedType,
+          FeedUrl: this.properties.feedUrl,
+          DateRange: this.properties.dateRange,
+          ConvertFromUTC: this.properties.convertFromUTC,
+          UseCORS: this.properties.useCORS,
+          MaxTotal: this.properties.maxTotal,
+          CacheDuration: this.properties.cacheDuration
+        });
       }
 
       resolve(undefined);
@@ -123,9 +117,49 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
   }
 
   /**
+   * Validates a URL when users type them in the configuration pane.
+   * @param feedUrl The URL to validate
+   */
+  private _validateFeedUrl(feedUrl: string): string {
+    if (this.properties.feedType === CalendarServiceProviderType.Mock) {
+      // we don't need a URL for mock feeds
+      return '';
+    }
+
+    // Make sure the feed isn't empty or null
+    if (feedUrl === null ||
+      feedUrl.trim().length === 0) {
+      return strings.FeedUrlValidationNoUrl;
+    }
+
+    if (!feedUrl.match(/(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/)) {
+      return strings.FeedUrlValidationInvalidFormat;
+    }
+
+    // No errors
+    return '';
+  }
+
+  /**
    * Show the configuration pane
    */
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
+    // create a drop down of feed providers from our list
+    const feedTypeOptions: IPropertyPaneDropdownOption[] = this._providerList.map(provider => {
+      return { key: provider.key, text: provider.label };
+    });
+
+    // migrate from old version to new
+    if(this.properties.providers && this.properties.providers.length > 0 && this.properties.feedType != undefined) {
+      this.properties.feedType = undefined;
+      this.properties.feedUrl = undefined;
+      this.properties.dateRange = undefined;
+      this.properties.convertFromUTC = undefined;
+      this.properties.useCORS = undefined;
+      this.properties.maxTotal = undefined;
+      this.properties.cacheDuration = undefined;
+    }
+
     return {
       pages: [
         {

@@ -19,6 +19,7 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
 
         this.state = (this.props.SelectedFeed) ? {
             ...this.props.SelectedFeed,
+            MaxTotal: (this.props.SelectedFeed && this.props.SelectedFeed.MaxTotal) ? this.props.SelectedFeed.MaxTotal : 0,
             showColorPicker: false
         } : {
             FeedType: null,
@@ -97,8 +98,8 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
                 />
                 <Dropdown label={strings.DateRangeFieldLabel}
                     options={dateRangeOptions}
-                    onChange={(e, newValue?) => { this.setState({ DateRange: DateRange[newValue.key] }); } }
-                    selectedKey={DateRange[this.state.DateRange]}
+                    onChange={(e, newValue?) => { console.log(newValue.key); this.setState({ DateRange: newValue.key as DateRange }); } }
+                    selectedKey={this.state.DateRange}
                 />
                 <Toggle label={
                     <div>
