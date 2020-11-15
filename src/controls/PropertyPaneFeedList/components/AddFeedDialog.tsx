@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Callout, ColorPicker, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IColumn, Icon, IDropdownOption, Label, MaskedTextField, PrimaryButton, SelectionMode, Slider, TextField, Toggle, TooltipHost } from 'office-ui-fabric-react';
+import { Callout, ColorPicker, DefaultButton, Dropdown, Icon, Label, Panel, PanelType, PrimaryButton, Slider, TextField, Toggle, TooltipHost } from 'office-ui-fabric-react';
 
 import * as strings from "CalendarFeedWebPartStrings";
 
@@ -7,7 +7,6 @@ import { IAddFeedDialogProps } from './IAddFeedDialogProps';
 import { IAddFeedDialogState } from './IAddFeedDialogState';
 import { CalendarServiceProviderList, CalendarServiceProviderType, DateRange } from '../../../shared/services/CalendarService';
 import styles from './AddFeedDialog.module.scss';
-import { PropertyPaneTextField } from '@microsoft/sp-property-pane';
 
 export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, IAddFeedDialogState> {
     private _providerList: any[];
@@ -74,14 +73,9 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
         const isMock: boolean = this.state.FeedType === CalendarServiceProviderType.Mock;
 
         return (
-            <Dialog dialogContentProps={{
-                    type: DialogType.normal,
-                    title: (this.props.SelectedFeed) ? strings.EditFeedLabel : strings.AddFeedLabel,
-                }}
-                modalProps={{
-                    containerClassName: 'ms-dialogMainOverride ' + styles.addFeedDialog
-                }}
-                hidden={false} onDismiss={this.props.OnDismiss}>
+            <Panel headerText={(this.props.SelectedFeed) ? strings.EditFeedLabel : strings.AddFeedLabel}
+                type={PanelType.medium} isOpen={true} onDismiss={this.props.OnDismiss}
+                onRenderFooterContent={this.onRenderFooterContent} isFooterAtBottom={true}>
                 <Dropdown id="feedTypeField" label={strings.FeedTypeFieldLabel}
                     options={feedTypeOptions}
                     onChange={(e, newValue?) => this.setState({ FeedType: CalendarServiceProviderType[newValue.key] })}
@@ -143,11 +137,14 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
                         <ColorPicker onChange={(ev, newValue) => this.setState({ FeedColor: '#'+newValue.hex }) } color={this.state.FeedColor} />
                     </Callout>
                 : null }
-                <DialogFooter>
-                    <PrimaryButton onClick={() => { this.props.OnSave(this.state); this.props.OnDismiss(); }} text="Save" />
-                    {this.props.SelectedFeed ? <DefaultButton onClick={() => { this.props.OnDelete(this.state); this.props.OnDismiss(); }} text="Delete" /> : null }
-                </DialogFooter>
-            </Dialog>
+            </Panel>
         );
     }
+
+    private onRenderFooterContent = () => {
+        return (<>
+            <PrimaryButton onClick={() => { this.props.OnSave(this.state); this.props.OnDismiss(); }} text="Save" />
+            {this.props.SelectedFeed ? <DefaultButton onClick={() => { this.props.OnDelete(this.state); this.props.OnDismiss(); }} text="Delete" /> : null }
+        </>);
+    };
 }
