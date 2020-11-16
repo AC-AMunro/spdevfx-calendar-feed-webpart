@@ -407,45 +407,42 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
       events: []
     });
 
+    // RegEx for matching dates
+    let reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
+    let reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
+
+    // Parser for field data, turn string dates into Date objects
+    let cacheParser = (key, value) => {
+      if ((key === 'start' || key === 'end') && typeof value === 'string') {
+          var a = reISO.exec(value);
+          if (a)
+              return new Date(value);
+          a = reMsAjax.exec(value);
+          if (a) {
+              var b = a[1].split(/[-+,.]/);
+              return new Date(b[0] ? +b[0] : 0 - +b[1]);
+          }
+      }
+      return value;
+    };
+
     for(const provider of providers) {
       const { Name, FeedUrl } = provider;
       let FullCacheKey = CacheKey + ":" + FeedUrl;
 
+      let feedCache: IFeedCache = JSON.parse(localStorage.getItem(FullCacheKey), cacheParser);
+      let cacheStillValid: boolean = (feedCache) ? moment().isBefore(feedCache.expiry) : false;
+
       // before we do anything with the data provider, let's make sure that we don't have stuff stored in the cache
       // load from cache if: 1) we said to use cache, and b) if we have something in cache
-      if ((provider.Name != CalendarServiceProviderType.Mock && provider.CacheDuration > 0) && (useCacheIfPossible && localStorage.getItem(FullCacheKey))) {
-
-        // RegEx for matching dates
-        var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
-        var reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
-        
-        // Parser for field data, turn string dates into Date objects
-        let cacheParser = (key, value) => {
-            if ((key === 'start' || key === 'end') && typeof value === 'string') {
-                var a = reISO.exec(value);
-                if (a)
-                    return new Date(value);
-                a = reMsAjax.exec(value);
-                if (a) {
-                    var b = a[1].split(/[-+,.]/);
-                    return new Date(b[0] ? +b[0] : 0 - +b[1]);
-                }
-            }
-            return value;
-        };
-
-        // parse the stored JSON with our cacheParser
-        let feedCache: IFeedCache = JSON.parse(localStorage.getItem(FullCacheKey), cacheParser);
+      if ((provider.Name != CalendarServiceProviderType.Mock && provider.CacheDuration > 0) && (useCacheIfPossible && feedCache && cacheStillValid)) {
 
         if (provider.MaxTotal > 0) {
           feedCache.events = feedCache.events.slice(0, provider.MaxTotal);
         }
 
-        //const { Name, FeedUrl } = this.props.provider;
-        let cacheStillValid: boolean = moment().isBefore(feedCache.expiry);
-
-        // make sure the cache hasn't expired or that the settings haven't changed
-        if (cacheStillValid && feedCache.feedType == Name && feedCache.feedUrl == FeedUrl) {
+        // make sure the settings haven't changed
+        if (feedCache.feedType == Name && feedCache.feedUrl == FeedUrl) {
           events.push(...feedCache.events);
           errorString = undefined;
         }

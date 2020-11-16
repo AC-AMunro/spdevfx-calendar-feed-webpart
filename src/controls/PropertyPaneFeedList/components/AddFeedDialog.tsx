@@ -21,6 +21,7 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
             MaxTotal: (this.props.SelectedFeed && this.props.SelectedFeed.MaxTotal) ? this.props.SelectedFeed.MaxTotal : 0,
             showColorPicker: false
         } : {
+            DisplayName: '',
             FeedType: null,
             FeedUrl: '',
             MaxTotal: 0,
@@ -80,15 +81,18 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
                     options={feedTypeOptions}
                     onChange={(e, newValue?) => this.setState({ FeedType: CalendarServiceProviderType[newValue.key] })}
                     selectedKey={this.state.FeedType} disabled={this.props.SelectedFeed != null}
+                    required={true}
                 />
                 {!isMock ? <TextField id="feedUrlField" label={strings.FeedUrlFieldLabel} placeholder="https://"
                     onChange={(e, newValue?) => this.setState({ FeedUrl: newValue }) }
                     defaultValue={this.state.FeedUrl} disabled={this.props.SelectedFeed != null}
                     onGetErrorMessage={this._validateFeedUrl.bind(this)}
+                    required={true}
                 /> : null }
                 <TextField id="feedDisplayNameField" label={strings.FeedDisplayNameFieldLabel}
                     onChange={(e, newValue?) => this.setState({ DisplayName: newValue }) }
                     defaultValue={this.state.DisplayName}
+                    required={true}
                 />
                 <Dropdown label={strings.DateRangeFieldLabel}
                     options={dateRangeOptions}
@@ -133,18 +137,25 @@ export default class AddFeedDialog extends React.Component<IAddFeedDialogProps, 
                 <Label>Color</Label>
                 <div className={styles.colorPickerRect} style={{ backgroundColor: this.state.FeedColor }} onClick={() => this.setState({showColorPicker: !this.state.showColorPicker})}></div>
                 {this.state.showColorPicker ?
-                    <Callout target={`.${styles.colorPickerRect}`}>
-                        <ColorPicker onChange={(ev, newValue) => this.setState({ FeedColor: '#'+newValue.hex }) } color={this.state.FeedColor} />
+                    <Callout target={`.${styles.colorPickerRect}`} onDismiss={this.hideColorPicker}>
+                        <ColorPicker alphaSliderHidden={true} onChange={(ev, newValue) => this.setState({ FeedColor: '#'+newValue.hex }) } color={this.state.FeedColor} />
                     </Callout>
                 : null }
             </Panel>
         );
     }
 
+    private hideColorPicker = () => {
+        this.setState({ showColorPicker: false });
+    }
+
     private onRenderFooterContent = () => {
         return (<>
-            <PrimaryButton onClick={() => { this.props.OnSave(this.state); this.props.OnDismiss(); }} text="Save" />
+            <PrimaryButton disabled={
+                (this.state.DisplayName && this.state.DisplayName.length == 0) ||
+                (this.state.FeedUrl && this.state.FeedUrl.length == 0 || this._validateFeedUrl(this.state.FeedUrl) != '') ||
+                this.state.FeedType == null} onClick={() => { this.props.OnSave(this.state); this.props.OnDismiss(); }} text="Save" />
             {this.props.SelectedFeed ? <DefaultButton onClick={() => { this.props.OnDelete(this.state); this.props.OnDismiss(); }} text="Delete" /> : null }
         </>);
-    };
+    }
 }

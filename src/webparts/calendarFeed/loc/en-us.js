@@ -14,7 +14,7 @@ define([], function() {
     PropertyPaneDescription: "Select the type of feed you wish to connect to and the feed URL.",
     AllItemsUrlFieldLabel: "View all events URL",
     FeedUrlFieldLabel: "Feed URL",
-    FeedTypeFieldLabel: "Feed type",
+    FeedTypeFieldLabel: "Feed Type",
     PlaceholderTitle: "Configure event feed",
     PlaceholderDescription: "To display a calendar of events, you need to select a feed type and configure the event feed URL.",
     ConfigureButton: "Configure",
@@ -72,6 +72,7 @@ define([], function() {
     ShowMore: "more",
     EventOwnerLabel: "event owner",
     AllDayLabel: "All Day",
-    FeedDisplayNameFieldLabel: "Name"
+    FeedDisplayNameFieldLabel: "Display Name",
+    NoFeedsConfigured: "There are no feeds configured."
   }
 });

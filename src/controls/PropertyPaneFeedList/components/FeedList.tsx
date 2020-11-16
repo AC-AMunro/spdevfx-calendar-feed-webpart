@@ -23,8 +23,7 @@ export default class FeedList extends React.Component<IFeedListProps, IFeedListS
             { key: 'feedColor', name: '', fieldName: 'FeedColor', minWidth: 16, maxWidth: 16, isResizable: false, onRender: (item:ICalendarServiceSettings, index, column) => {
                return <div className={styles.colorPickerRect} style={{backgroundColor: item.FeedColor}}></div>;
             } },
-            { key: 'feedType', name: strings.FeedTypeFieldLabel, fieldName: 'FeedType', minWidth: 50, maxWidth: 100, isResizable: true },
-            { key: 'feedUrl', name: strings.FeedUrlFieldLabel, fieldName: 'FeedUrl', minWidth: 100, maxWidth: 200, isResizable: true },
+            { key: 'feedName', name: strings.FeedDisplayNameFieldLabel, fieldName: 'DisplayName', minWidth: 120, maxWidth: 200, isResizable: true },
             { key: 'edit', name: '', fieldName: 'edit', minWidth: 16, maxWidth: 16, isResizable: false },
             { key: 'delete', name: '', fieldName: 'delete', minWidth: 16, maxWidth: 16, isResizable: false }
         ];
@@ -40,13 +39,15 @@ export default class FeedList extends React.Component<IFeedListProps, IFeedListS
         
         return (
             <div>
+                {this.state.items.length > 0 ?
                 <DetailsList
+                    className={styles.feedList}
                     columns={this._columns}
                     items={this.state.items}
                     layoutMode={DetailsListLayoutMode.justified}
                     selectionMode={SelectionMode.none}
                     onRenderItemColumn={this.handleRenderItemColumn}
-                />
+                /> : <p>{strings.NoFeedsConfigured}</p>}
 
                 <PrimaryButton
                     text={strings.AddFeedLabel}
@@ -72,8 +73,11 @@ export default class FeedList extends React.Component<IFeedListProps, IFeedListS
     }
 
     private handleDelete = (item: ICalendarServiceSettings) => {
-        const items = [...this.state.items];
-        if(items.length > 0 && items.indexOf(item) != -1) {
+        let items = [...this.state.items];
+        if(items.length == 1) {
+            items = [];
+        }
+        if(items.length > 1 && items.indexOf(item) != -1) {
             items.splice(items.indexOf(item), 1);
         }
         this.setState({ items: items, feedPropertiesDialogIsOpen: false, selectedFeed: null }, () => {

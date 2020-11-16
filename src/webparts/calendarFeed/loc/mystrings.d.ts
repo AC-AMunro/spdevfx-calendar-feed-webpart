@@ -73,6 +73,7 @@ declare interface ICalendarFeedWebPartStrings {
   EventOwnerLabel: string;
   AllDayLabel: string;
   FeedDisplayNameFieldLabel: string;
+  NoFeedsConfigured: string;
 }
 
 declare module 'CalendarFeedWebPartStrings' {
