@@ -22,12 +22,7 @@
       },
       "officeFabricIconFontName": "Calendar",
       "properties": {
-        "title": "Event Feed Calendar",
-        "dateRange": 4,
-        "useCORS": false,
-        "cacheDuration": 60,
-        "maxTotal": 0,
-        "convertFromUTC": false
+        "title": "Event Feed Calendar"
       }
   }]
 }
