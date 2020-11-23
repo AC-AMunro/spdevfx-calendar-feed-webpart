@@ -3,7 +3,7 @@
  * This provider will NOT be listed in the list of available providers when this solution is packaged with --ship.
  * Don't freak out, it didn't just disappear.
  */
-import * as moment from "moment";
+import moment from "moment";
 import { BaseCalendarService } from "../BaseCalendarService";
 import { ICalendarEvent } from "../ICalendarEvent";
 import { ICalendarService } from "../ICalendarService";

@@ -7,7 +7,7 @@ import { BaseCalendarService } from "../BaseCalendarService";
 import { ICalendarEvent } from "../ICalendarEvent";
 import { Web } from "@pnp/sp";
 import { combine } from "@pnp/common";
-import * as moment from "moment";
+import moment from "moment";
 
 export class SharePointCalendarService extends BaseCalendarService
   implements ICalendarService {

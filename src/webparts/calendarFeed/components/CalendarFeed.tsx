@@ -3,7 +3,7 @@ import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
 import * as strings from "CalendarFeedWebPartStrings";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import * as moment from "moment";
+import moment from "moment";
 import {
   Spinner, css,
   Icon,
@@ -200,6 +200,8 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
      * @returns {JSX.Element}
      */
     const onRenderPlainCard = (): JSX.Element => {
+      let startMoment = moment(event.start);
+      let endMoment = moment(event.end);
       return (
         <div className={styles.plainCard}>
           <DocumentCard className={styles.Documentcard}   >
@@ -211,15 +213,16 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
                 <DocumentCardTitle title={event.title} shouldTruncate={true} className={styles.DocumentCardTitle} styles={{ root: { color: event.color} }} />
               </div>
               {
-                moment(event.start).format('YYYY/MM/DD') !== moment(event.end).format('YYYY/MM/DD') ?
-                  <span className={styles.DocumentCardTitleTime}>{moment(event.start).format('dddd')} - {moment(event.end).format('dddd')} </span>
+                startMoment.format('YYYY/MM/DD') !== endMoment.format('YYYY/MM/DD') ?
+                  <span className={styles.DocumentCardTitleTime}>{startMoment.format('dddd')} - {endMoment.format('dddd')} </span>
                   :
-                  <span className={styles.DocumentCardTitleTime}>{moment(event.start).format('dddd')} </span>
+                  <span className={styles.DocumentCardTitleTime}>{startMoment.format('dddd')} </span>
               }
               {
                 (event.allDay) ?
                   <span className={styles.DocumentCardTitleTime}>{strings.AllDayLabel}</span> :
-                  <span className={styles.DocumentCardTitleTime}>{moment(event.start).format('h:mm A')} - {moment(event.end).format('h:mm A')}</span>
+                    (startMoment.format('YYYY/MM/DD h:mm A') === endMoment.format('YYYY/MM/DD h:mm A')) ? <span className={styles.DocumentCardTitleTime}>{startMoment.format('h:mm A')}</span>
+                      : <span className={styles.DocumentCardTitleTime}>{startMoment.format('h:mm A')} - {endMoment.format('h:mm A')}</span>
               }
               { (event.location != undefined && event.location != null && event.location != '') && <span className={styles.locationContainer}> 
                 <Icon iconName='MapPin' className={styles.locationIcon} />

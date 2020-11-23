@@ -1,4 +1,4 @@
-import * as moment from "moment";
+import moment from "moment";
 import { css } from "@fluentui/react/lib/Utilities";
 import * as React from "react";
 import styles from "./DateBox.module.scss";

@@ -1,6 +1,6 @@
 import { HttpClient, HttpClientResponse, IHttpClientOptions } from "@microsoft/sp-http";
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import * as moment from "moment";
+import moment from "moment";
 import { CalendarEventRange } from ".";
 import { ICalendarEvent } from "./ICalendarEvent";
 import { ICalendarService } from "./ICalendarService";
