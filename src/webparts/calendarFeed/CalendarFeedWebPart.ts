@@ -11,7 +11,7 @@ import { Version } from '@microsoft/sp-core-library';
 import * as strings from "CalendarFeedWebPartStrings";
 
 // Calendar services
-import { CalendarEventRange, CalendarServiceProviderType, DateRange, ICalendarService } from "../../shared/services/CalendarService";
+import { CalendarEventRange, CalendarServiceProviderType, ICalendarService } from "../../shared/services/CalendarService";
 import { CalendarServiceProviderList } from "../../shared/services/CalendarService/CalendarServiceProviderList";
 
 // Web part properties
