@@ -1,4 +1,3 @@
-import { IColor } from "@fluentui/react";
 import { DateRange } from "./CalendarEventRange";
 import { CalendarServiceProviderType } from "./CalendarServiceProviderList";
 

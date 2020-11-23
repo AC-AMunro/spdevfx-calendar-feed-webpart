@@ -1,7 +1,6 @@
 /**
  * ExtensionService
  */
-import { HttpClientResponse } from "@microsoft/sp-http";
 import { ICalendarService } from "..";
 import { BaseCalendarService } from "../BaseCalendarService";
 import { ICalendarEvent } from "../ICalendarEvent";
@@ -44,7 +43,7 @@ export class SharePointCalendarService extends BaseCalendarService
     // Get the web
     await web.get();
     // Build a filter so that we don't retrieve every single thing unless necesssary
-    let dateFilter: string = "EventDate ge datetime'" + this.EventRange.Start.toISOString() + "' and EndDate lt datetime'" + this.EventRange.End.toISOString() + "'";
+    //let dateFilter: string = "EventDate ge datetime'" + this.EventRange.Start.toISOString() + "' and EndDate lt datetime'" + this.EventRange.End.toISOString() + "'";
     try {
       const list = await web.getList(listUrl).get();
       const items = await web.getList(listUrl)

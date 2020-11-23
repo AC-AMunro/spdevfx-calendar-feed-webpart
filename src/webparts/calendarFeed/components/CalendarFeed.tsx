@@ -22,9 +22,6 @@ require('./calendar.css');
 // the key used when caching events
 const CacheKey: string = "calendarFeed";
 
-// this is the same width that the SharePoint events web parts use to render as narrow
-const MaxMobileWidth: number = 480;
-
 const localizer = momentLocalizer(moment);
 
 /**
@@ -259,8 +256,6 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
    * Render your web part content
    */
   private _renderContent(): JSX.Element {
-    const isNarrow: boolean = this.props.clientWidth < MaxMobileWidth;
-
     const {
       displayMode
     } = this.props;

@@ -35,7 +35,7 @@ import CalendarFeedSummary from "./components/CalendarFeedSummary";
 import { ICalendarFeedSummaryProps } from "./components/CalendarFeedSummary.types";
 
 // Support for theme variants
-import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme, ISemanticColors } from '@microsoft/sp-component-base';
+import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
 
 /**
  * Calendar Feed Summary Web Part

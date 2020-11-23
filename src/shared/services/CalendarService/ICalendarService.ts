@@ -1,5 +1,4 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import { IColor } from "@fluentui/react";
 import { CalendarEventRange, ICalendarEvent } from ".";
 
 export interface ICalendarService {

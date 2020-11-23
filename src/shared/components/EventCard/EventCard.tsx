@@ -81,9 +81,6 @@ export const EventCard = (props: IEventCardProps) => {
     window.open("data:text/calendar;charset=utf8," + encodeURIComponent(cal.toString()));
   }, [event]);
 
-  //Unfortunately, themes don't always populate all the palette/semantic colors.
-  //Detect if background color is the same as the foreground and find default
-  const backgroundColor: string = themeVariant && themeVariant.semanticColors.bodyBackground;
   //const textColor: string = themeVariant && backgroundColor != themeVariant.semanticColors.bodyText ?
   //  themeVariant.semanticColors.bodyText : themeVariant.palette["accent"];
   //const subTextColor: string = themeVariant && themeVariant.semanticColors.bodySubtext && backgroundColor != themeVariant.semanticColors.bodySubtext ? themeVariant.semanticColors.bodySubtext : textColor;

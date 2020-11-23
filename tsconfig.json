@@ -3,7 +3,7 @@
   "compilerOptions": {
     "inlineSources": false,
     "strictNullChecks": false,
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
     "target": "es5",
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
