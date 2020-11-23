@@ -13,6 +13,7 @@
     "package": "gulp clean && gulp build --ship && gulp bundle --ship && gulp package-solution --ship"
   },
   "dependencies": {
+    "@fluentui/react": "^7.152.1",
     "@microsoft/sp-core-library": "1.10.0",
     "@microsoft/sp-lodash-subset": "1.10.0",
     "@microsoft/sp-office-ui-fabric-core": "1.10.0",
@@ -28,12 +29,11 @@
     "@types/react": "16.8.8",
     "@types/react-dom": "16.8.3",
     "@types/webpack-env": "1.13.1",
-    "@uifabric/fluent-theme": "^0.16.7",
+    "@uifabric/utilities": "^7.33.2",
     "feedparser": "^2.2.9",
     "ical.js": "^1.4.0",
     "ics-js": "^0.10.2",
     "moment": "^2.24.0",
-    "office-ui-fabric-react": "6.189.2",
     "react": "16.8.5",
     "react-big-calendar": "^0.28.1",
     "react-dom": "16.8.5",

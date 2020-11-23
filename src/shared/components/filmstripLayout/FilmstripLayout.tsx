@@ -1,5 +1,5 @@
 import { css } from '@uifabric/utilities/lib/css';
-import { IconButton } from 'office-ui-fabric-react/lib/Button';
+import { IconButton } from '@fluentui/react/lib/Button';
 import * as React from 'react';
 import Slider from 'react-slick';
 import { SPComponentLoader } from '@microsoft/sp-loader';

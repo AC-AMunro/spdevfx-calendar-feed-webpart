@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Callout, ColorPicker, DefaultButton, Dropdown, Icon, Label, Panel, PanelType, PrimaryButton, Slider, TextField, Toggle, TooltipHost } from 'office-ui-fabric-react';
+import { Callout, ColorPicker, DefaultButton, Dropdown, Icon, Label, Panel, PanelType, PrimaryButton, Slider, TextField, Toggle, TooltipHost } from '@fluentui/react';
 
 import * as strings from "CalendarFeedWebPartStrings";
 

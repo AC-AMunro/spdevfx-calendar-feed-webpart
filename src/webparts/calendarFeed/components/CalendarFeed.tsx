@@ -9,7 +9,7 @@ import {
   Icon,
   DocumentCard, DocumentCardTitle, IDocumentCardPreviewProps, DocumentCardPreview, DocumentCardDetails,
   HoverCard, HoverCardType
-} from "office-ui-fabric-react";
+} from "@fluentui/react";
 import * as React from "react";
 import { CalendarServiceProviderType, ICalendarEvent, ICalendarService } from "../../../shared/services/CalendarService";
 import styles from "./CalendarFeed.module.scss";

@@ -1,5 +1,5 @@
 import * as moment from "moment";
-import { css } from "office-ui-fabric-react/lib/Utilities";
+import { css } from "@fluentui/react/lib/Utilities";
 import * as React from "react";
 import styles from "./DateBox.module.scss";
 import { DateBoxSize, IDateBoxProps } from ".";

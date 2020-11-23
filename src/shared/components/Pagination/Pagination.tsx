@@ -1,6 +1,6 @@
-import { ActionButton, IButtonProps } from "office-ui-fabric-react/lib/Button";
-import { Icon } from "office-ui-fabric-react/lib/Icon";
-import { css } from "office-ui-fabric-react/lib/Utilities";
+import { ActionButton, IButtonProps } from "@fluentui/react/lib/Button";
+import { Icon } from "@fluentui/react/lib/Icon";
+import { css } from "@fluentui/react/lib/Utilities";
 import * as React from "react";
 import { IPaginationProps } from ".";
 import styles from "./Pagination.module.scss";

@@ -1,4 +1,4 @@
-import { IColor } from "office-ui-fabric-react";
+import { IColor } from "@fluentui/react";
 import { DateRange } from "./CalendarEventRange";
 import { CalendarServiceProviderType } from "./CalendarServiceProviderList";
 

@@ -2,7 +2,7 @@ import { Guid } from "@microsoft/sp-core-library";
 import * as strings from "CalendarFeedSummaryWebPartStrings";
 import * as ICS from "ics-js";
 import * as moment from "moment";
-import { ActionButton, DocumentCard, DocumentCardType, FocusZone, css } from "office-ui-fabric-react";
+import { ActionButton, DocumentCard, DocumentCardType, FocusZone, css } from "@fluentui/react";
 import * as React from "react";
 import { IEventCardProps } from ".";
 import { DateBox, DateBoxSize } from "../DateBox";

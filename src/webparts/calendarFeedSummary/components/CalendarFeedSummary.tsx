@@ -3,7 +3,7 @@ import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
 import * as strings from "CalendarFeedSummaryWebPartStrings";
 import * as moment from "moment";
-import { FocusZone, FocusZoneDirection, List, Spinner, css } from "office-ui-fabric-react";
+import { FocusZone, FocusZoneDirection, List, Spinner, css } from "@fluentui/react";
 import * as React from "react";
 import { EventCard } from "../../../shared/components/EventCard";
 import { Pagination } from "../../../shared/components/Pagination";

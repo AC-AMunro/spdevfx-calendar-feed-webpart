@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DetailsList, DetailsListLayoutMode, IColumn, IconButton, IIconProps, PrimaryButton, SelectionMode } from 'office-ui-fabric-react';
+import { DetailsList, DetailsListLayoutMode, IColumn, IconButton, IIconProps, PrimaryButton, SelectionMode } from '@fluentui/react';
 
 import AddFeedDialog from './AddFeedDialog';
 import { IFeedListProps } from './IFeedListProps';
