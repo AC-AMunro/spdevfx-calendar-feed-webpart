@@ -230,7 +230,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
               </span> }
               { (event.url != undefined && event.url != null && event.url != '') && <span className={styles.websiteContainer}>
                 <Icon iconName='Globe' className={styles.websiteIcon} />
-                <a href={event.url} className={styles.website}>Visit URL</a>
+                <a href={event.url} target="_blank" className={styles.website}>Visit URL</a>
               </span> }
             </DocumentCardDetails>
           </DocumentCard>
