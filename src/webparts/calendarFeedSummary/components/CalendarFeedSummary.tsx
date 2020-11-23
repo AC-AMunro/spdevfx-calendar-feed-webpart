@@ -9,7 +9,8 @@ import { EventCard } from "../../../shared/components/EventCard";
 import { Pagination } from "../../../shared/components/Pagination";
 import { CalendarServiceProviderType, ICalendarEvent, ICalendarService } from "../../../shared/services/CalendarService";
 import styles from "./CalendarFeedSummary.module.scss";
-import { ICalendarFeedSummaryProps, ICalendarFeedSummaryState, IFeedCache } from "./CalendarFeedSummary.types";
+import { ICalendarFeedSummaryProps, ICalendarFeedSummaryState } from "./CalendarFeedSummary.types";
+import { IFeedCache } from "../../../shared/types";
 import { FilmstripLayout } from "../../../shared/components/filmstripLayout/index";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 

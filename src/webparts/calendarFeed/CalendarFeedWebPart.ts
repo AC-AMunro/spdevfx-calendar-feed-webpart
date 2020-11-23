@@ -156,10 +156,10 @@ export default class CalendarFeedWebPart extends BaseClientSideWebPart<ICalendar
           },
           groups: [
             {
-              groupName: "Providers",
+              groupName: strings.ProvidersLabel,
               groupFields: [
                 new PropertyPaneFeedList("providers", {
-                  label: "Providers",
+                  label: strings.ProvidersLabel,
                   providers: this.properties.providers
                 })
               ]

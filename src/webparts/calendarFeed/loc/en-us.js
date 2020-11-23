@@ -11,7 +11,7 @@ define([], function() {
     MaxTotalFieldDescription: "Indicates the total number of events to load. Use 0 for no maximum.",
     MaxTotalFieldLabel: "Maximum number of events",
     FilmStripAriaLabel: "Events list. Use left and right arrow keys to move between events. Press enter to go to the selected event.",
-    PropertyPaneDescription: "Select the type of feed you wish to connect to and the feed URL.",
+    PropertyPaneDescription: "Add or remove this webpart's Calendar Feed Providers from the list below.",
     AllItemsUrlFieldLabel: "View all events URL",
     FeedUrlFieldLabel: "Feed URL",
     FeedTypeFieldLabel: "Feed Type",
@@ -73,6 +73,7 @@ define([], function() {
     EventOwnerLabel: "event owner",
     AllDayLabel: "All Day",
     FeedDisplayNameFieldLabel: "Display Name",
-    NoFeedsConfigured: "There are no feeds configured."
+    NoFeedsConfigured: "There are no feeds configured.",
+    ProvidersLabel: "Providers"
   }
 });

@@ -13,7 +13,8 @@ import {
 import * as React from "react";
 import { CalendarServiceProviderType, ICalendarEvent, ICalendarService } from "../../../shared/services/CalendarService";
 import styles from "./CalendarFeed.module.scss";
-import { ICalendarFeedProps, ICalendarFeedState, IFeedCache } from "./CalendarFeed.types";
+import { ICalendarFeedProps, ICalendarFeedState } from "./CalendarFeed.types";
+import { IFeedCache } from "../../../shared/types";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 require('./calendar.css');
@@ -221,11 +222,11 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
                   <span className={styles.DocumentCardTitleTime}>{moment(event.start).format('h:mm A')} - {moment(event.end).format('h:mm A')}</span>
               }
               { (event.location != undefined && event.location != null && event.location != '') && <span className={styles.locationContainer}> 
-                <Icon iconName='MapPin' className={styles.locationIcon} style={{ color: event.color }} />
+                <Icon iconName='MapPin' className={styles.locationIcon} />
                 <span className={styles.location}>{event.location}</span>
               </span> }
               { (event.url != undefined && event.url != null && event.url != '') && <span className={styles.websiteContainer}>
-                <Icon iconName='Globe' className={styles.websiteIcon} style={{ color: event.color }} />
+                <Icon iconName='Globe' className={styles.websiteIcon} />
                 <a href={event.url} className={styles.website}>Visit URL</a>
               </span> }
             </DocumentCardDetails>

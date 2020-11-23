@@ -7,7 +7,6 @@
  */
 import { DisplayMode } from "@microsoft/sp-core-library";
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import { Moment } from "moment";
 import { ICalendarEvent, ICalendarService } from "../../../shared/services/CalendarService";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
@@ -32,14 +31,4 @@ export interface ICalendarFeedState {
   events: ICalendarEvent[];
   error: any|undefined;
   isLoading: boolean;
-}
-
-/**
- * Interface to store cached events with an expiry date
- */
-export interface IFeedCache {
-  events: ICalendarEvent[];
-  expiry: Moment;
-  feedType: string;
-  feedUrl: string;
 }
