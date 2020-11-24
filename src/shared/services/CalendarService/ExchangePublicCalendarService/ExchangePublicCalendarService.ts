@@ -2,7 +2,7 @@
  * Exchange Public Calendar Service
  */
 import { ICalendarService } from "..";
-import { ICalendarEvent } from "../ICalendarEvent";
+import { IFeedEvent } from "../IFeedEvent";
 import { iCalCalendarService } from "../iCalCalendarService";
 
 // tslint:disable-next-line:class-name
@@ -12,7 +12,7 @@ export class ExchangePublicCalendarService extends iCalCalendarService implement
         this.Name = "Exchange";
     }
 
-    public getEvents = (): Promise<ICalendarEvent[]> => {
+    public getEvents = (): Promise<IFeedEvent[]> => {
         // exchange public calendar shares are really ICS calendars.
         // we allow users to pass either the .html URL or
         // the .ics, but we really need the .ics file

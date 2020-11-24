@@ -1,4 +1,4 @@
-export interface ICalendarEvent {
+export interface IFeedEvent {
     color?: string;
     title: string;
     start: Date;

@@ -11,10 +11,9 @@ import {
   HoverCard, HoverCardType
 } from "@fluentui/react";
 import * as React from "react";
-import { CalendarServiceProviderType, ICalendarEvent, ICalendarService } from "../../../shared/services/CalendarService";
+import { CalendarServiceProviderType, IFeedEvent, ICalendarService } from "../../../shared/services/CalendarService";
 import styles from "./CalendarFeed.module.scss";
-import { ICalendarFeedProps, ICalendarFeedState } from "./CalendarFeed.types";
-import { IFeedCache } from "../../../shared/types";
+import { ICalendarFeedProps, ICalendarFeedState, ICalendarFeedCache, ICalendarProvider, ICalendarEvent } from "./CalendarFeed.types";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 require('./calendar.css');
@@ -32,6 +31,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
     super(props);
     this.state = {
       isLoading: false,
+      providers: props.providers.map((prov) => { return {...prov, visible: true}; }),
       events: [],
       error: undefined
     };
@@ -181,7 +181,6 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
    * @memberof Calendar
    */
   private renderEvent({ event }) {
-
     const previewEventIcon: IDocumentCardPreviewProps = {
       previewImages: [
         {
@@ -269,11 +268,6 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
     const hasErrors: boolean = error !== undefined;
     const hasEvents: boolean = events.length > 0;
 
-    /*if (isLoading) {
-      // we're currently loading
-      return (<div className={styles.spinner}><Spinner label={strings.Loading} /></div>);
-    }*/
-
     if (hasErrors) {
       // we're done loading but got some errors
       if (!isEditMode) {
@@ -294,7 +288,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
             dayPropGetter={this.dayPropGetter}
             localizer={localizer}
             selectable
-            events={this.state.events}
+            events={this.state.events.map((event) => { if(event.visible == true) return event; })}
             startAccessor="start"
             endAccessor="end"
             eventPropGetter={this.eventStyleGetter}
@@ -315,14 +309,35 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
             }
           />
         </div>
-        {this.props.providers.length > 1 ? 
+        {this.state.providers.length > 1 ? 
         <ul className={styles.legend}>
-          {this.props.providers.map((provider:ICalendarService, idx) => {
-            if (provider.DisplayName) return <li key={idx} style={{ borderColor: provider.Color }}>{provider.DisplayName}</li>;
+          {this.state.providers.map((provider:ICalendarProvider, idx) => {
+            if (provider.DisplayName) return <li key={idx} style={{ borderColor: provider.Color, opacity: (provider.visible) ? 1 : 0.5 }} onClick={(e) => { this.toggleProviderVisibility(provider); e.preventDefault(); }}>{provider.DisplayName}</li>;
           })}
         </ul> : null }
       </>
     );
+  }
+
+  private _getProviderKey = (provider:ICalendarService) => {
+    return provider.Name+':'+provider.FeedUrl;
+  }
+
+  private toggleProviderVisibility = (provider:ICalendarService) => {
+    const { providers, events } = this.state;
+    const providerKey = this._getProviderKey(provider);
+
+    providers.forEach(p => {
+      if(p.FeedUrl == provider.FeedUrl)
+        p.visible = !p.visible;
+    });
+
+    events.forEach(e => {
+      if(e.provider == providerKey)
+        e.visible = !e.visible;
+    });
+
+    this.setState({ events, providers });
   }
 
   /**
@@ -429,7 +444,7 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
       const { Name, FeedUrl } = provider;
       let FullCacheKey = CacheKey + ":" + FeedUrl;
 
-      let feedCache: IFeedCache = JSON.parse(localStorage.getItem(FullCacheKey), cacheParser);
+      let feedCache: ICalendarFeedCache = JSON.parse(localStorage.getItem(FullCacheKey), cacheParser);
       let cacheStillValid: boolean = (feedCache) ? moment().isBefore(feedCache.expiry) : false;
 
       // before we do anything with the data provider, let's make sure that we don't have stuff stored in the cache
@@ -449,18 +464,16 @@ export default class CalendarFeed extends React.Component<ICalendarFeedProps, IC
         // nothing in cache, load fresh
         if (provider) {
           try {
-            let providerEvents = await provider.getEvents();
-
-            providerEvents.map((event) => {
-              if(provider.Color) event.color = provider.Color;
+            let providerEvents = await (await provider.getEvents()).map((item:IFeedEvent) => {
+              if(provider.Color) item.color = provider.Color;
               
-              return event;
+              return { ...item, provider: this._getProviderKey(provider), visible: true };
             });
 
             localStorage.removeItem(FullCacheKey);
 
             if(provider.CacheDuration > 0) {
-              const cache: IFeedCache = {
+              const cache: ICalendarFeedCache = {
                 expiry: moment().add(provider.CacheDuration, "minutes"),
                 feedType: Name,
                 feedUrl: FeedUrl,

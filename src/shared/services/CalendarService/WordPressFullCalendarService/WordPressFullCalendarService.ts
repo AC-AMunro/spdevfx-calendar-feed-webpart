@@ -3,7 +3,7 @@
  */
 import { ICalendarService } from "..";
 import { BaseCalendarService } from "../BaseCalendarService";
-import { ICalendarEvent } from "../ICalendarEvent";
+import { IFeedEvent } from "../IFeedEvent";
 import { IWordPressFullCalendarEventResponse } from "./IWordPressFullCalendarEventResponse";
 
 export class WordPressFullCalendarService extends BaseCalendarService implements ICalendarService {
@@ -12,15 +12,15 @@ export class WordPressFullCalendarService extends BaseCalendarService implements
         this.Name = "WordPress";
     }
 
-    public getEvents = async (): Promise<ICalendarEvent[]> => {
+    public getEvents = async (): Promise<IFeedEvent[]> => {
         const parameterizedFeedUrl: string = this.replaceTokens(this.FeedUrl, this.EventRange);
 
         try {
         const data = await this.fetchResponseAsJson(parameterizedFeedUrl);
-        let events: ICalendarEvent[] = data.map((e: IWordPressFullCalendarEventResponse) => {
+        let events: IFeedEvent[] = data.map((e: IWordPressFullCalendarEventResponse) => {
           const startDate: Date = this.convertToDate(e.start);
           const endDate: Date = this.convertToDate(e.end);
-          const eventItem: ICalendarEvent = {
+          const eventItem: IFeedEvent = {
             title: e.title,
             start: startDate,
             end: endDate,

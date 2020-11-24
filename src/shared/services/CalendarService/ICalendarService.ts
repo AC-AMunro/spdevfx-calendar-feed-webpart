@@ -1,5 +1,5 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import { CalendarEventRange, ICalendarEvent } from ".";
+import { CalendarEventRange, IFeedEvent } from ".";
 
 export interface ICalendarService {
     Context: WebPartContext;
@@ -12,5 +12,5 @@ export interface ICalendarService {
     Name: string;
     DisplayName?: string;
     Color?: string;
-    getEvents: () => Promise<ICalendarEvent[]>;
+    getEvents: () => Promise<IFeedEvent[]>;
 }

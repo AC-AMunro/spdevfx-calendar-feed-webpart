@@ -1,11 +1,11 @@
 import { Moment } from "moment";
-import { ICalendarEvent } from "../services/CalendarService";
+import { IFeedEvent } from "../services/CalendarService";
 
 /**
  * Interface to store cached events with an expiry date
  */
 export interface IFeedCache {
-    events: ICalendarEvent[];
+    events: IFeedEvent[];
     expiry: Moment;
     feedType: string;
     feedUrl: string;

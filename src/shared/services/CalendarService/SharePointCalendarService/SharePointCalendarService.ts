@@ -3,7 +3,7 @@
  */
 import { ICalendarService } from "..";
 import { BaseCalendarService } from "../BaseCalendarService";
-import { ICalendarEvent } from "../ICalendarEvent";
+import { IFeedEvent } from "../IFeedEvent";
 import { Web } from "@pnp/sp";
 import { combine } from "@pnp/common";
 import moment from "moment";
@@ -15,7 +15,7 @@ export class SharePointCalendarService extends BaseCalendarService
     this.Name = "SharePoint";
   }
 
-  public getEvents = async (): Promise<ICalendarEvent[]> => {
+  public getEvents = async (): Promise<IFeedEvent[]> => {
     const parameterizedFeedUrl: string = this.replaceTokens(
       this.FeedUrl,
       this.EventRange
@@ -52,12 +52,12 @@ export class SharePointCalendarService extends BaseCalendarService
         //.filter(dateFilter)
         .get();
       // Once we get the list, convert to calendar events
-      let events: ICalendarEvent[] = items.map((item: any) => {
+      let events: IFeedEvent[] = items.map((item: any) => {
         let eventUrl: string = combine(siteUrl, "_layouts/15/Event.aspx?ListGuid=" + list.Id + "&ItemId=" + item.Id);
         // why oh why do they leave all day events in UTC time but don't set the date/time correctly...?
         let eventDate: Date = item.fAllDayEvent ? item.EventDate.replace('Z', '') : item.EventDate;
         let endDate: Date = item.fAllDayEvent ? item.EndDate.replace('Z', '') : item.EndDate;
-        const eventItem: ICalendarEvent = {
+        const eventItem: IFeedEvent = {
           title: item.Title,
           start: moment(eventDate).toDate(),
           end: moment(endDate).toDate(),

@@ -10,7 +10,7 @@
     "build": "gulp bundle",
     "clean": "gulp clean",
     "test": "gulp test",
-    "package": "gulp clean && gulp build --ship && gulp bundle --ship && gulp package-solution --ship"
+    "package": "gulp clean --ship && gulp build --ship && gulp bundle --ship && gulp package-solution --ship"
   },
   "dependencies": {
     "@fluentui/react": "^7.152.1",

@@ -7,7 +7,7 @@ import { FocusZone, FocusZoneDirection, List, Spinner, css } from "@fluentui/rea
 import * as React from "react";
 import { EventCard } from "../../../shared/components/EventCard";
 import { Pagination } from "../../../shared/components/Pagination";
-import { CalendarServiceProviderType, ICalendarEvent, ICalendarService } from "../../../shared/services/CalendarService";
+import { CalendarServiceProviderType, IFeedEvent, ICalendarService } from "../../../shared/services/CalendarService";
 import styles from "./CalendarFeedSummary.module.scss";
 import { ICalendarFeedSummaryProps, ICalendarFeedSummaryState } from "./CalendarFeedSummary.types";
 import { IFeedCache } from "../../../shared/types";
@@ -241,7 +241,7 @@ export default class CalendarFeedSummary extends React.Component<ICalendarFeedSu
     // if we're in edit mode, let's not make the events clickable
     const isEditMode: boolean = this.props.displayMode === DisplayMode.Edit;
 
-    let pagedEvents: ICalendarEvent[] = events;
+    let pagedEvents: IFeedEvent[] = events;
     let usePaging: boolean = false;
 
     if (maxEvents > 0 && events.length > maxEvents) {
@@ -302,7 +302,7 @@ export default class CalendarFeedSummary extends React.Component<ICalendarFeedSu
             clientWidth={this.props.clientWidth}
             themeVariant={this.props.themeVariant}
           >
-            {events.map((event: ICalendarEvent, index: number) => {
+            {events.map((event: IFeedEvent, index: number) => {
               return (<EventCard
                 key={`eventCard${index}`}
                 isEditMode={isEditMode}

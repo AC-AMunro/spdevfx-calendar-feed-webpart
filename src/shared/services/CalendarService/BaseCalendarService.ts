@@ -2,7 +2,7 @@ import { HttpClient, HttpClientResponse } from "@microsoft/sp-http";
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import moment from "moment";
 import { CalendarEventRange } from ".";
-import { ICalendarEvent } from "./ICalendarEvent";
+import { IFeedEvent } from "./IFeedEvent";
 import { ICalendarService } from "./ICalendarService";
 
 /**
@@ -21,15 +21,15 @@ export abstract class BaseCalendarService implements ICalendarService {
   public MaxTotal: number;
   public ConvertFromUTC: boolean;
 
-  public getEvents: () => Promise<ICalendarEvent[]>;
+  public getEvents: () => Promise<IFeedEvent[]>;
   /**
    * Solves an issue where some providers (I'm looking at you, WordPress) returns all-day events
    * as starting from midight on the first day, and ending at midnight on the second day, making events
    * appear as lasting 2 days when they should last only 1 day
    * @param event The event that needs to be fixed
    */
-  protected fixAllDayEvents(events: ICalendarEvent[]): ICalendarEvent[] {
-    events.forEach((event: ICalendarEvent) => {
+  protected fixAllDayEvents(events: IFeedEvent[]): IFeedEvent[] {
+    events.forEach((event: IFeedEvent) => {
       if (event.allDay) {
         event.start.setHours(0);
         event.end.setHours(0);
@@ -52,7 +52,7 @@ export abstract class BaseCalendarService implements ICalendarService {
    * the provider has retrieved them so that we can be consistent regardless of the provider
    * @param events The list of events to filter
    */
-  protected filterEventRange(events: ICalendarEvent[]): ICalendarEvent[] {
+  protected filterEventRange(events: IFeedEvent[]): IFeedEvent[] {
     const {
       Start,
       End } = this.EventRange;
@@ -61,7 +61,7 @@ export abstract class BaseCalendarService implements ICalendarService {
     events = events.filter(e => e.start >= Start && e.end <= End);
 
     // sort events by date in case we need to truncate
-    events.sort((leftSide: ICalendarEvent, rightSide: ICalendarEvent): number => {
+    events.sort((leftSide: IFeedEvent, rightSide: IFeedEvent): number => {
       if (leftSide.start < rightSide.start) {
         return -1;
       }

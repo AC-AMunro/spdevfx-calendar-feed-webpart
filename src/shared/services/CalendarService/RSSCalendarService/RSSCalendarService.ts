@@ -8,7 +8,7 @@
  */
 import { ICalendarService } from "..";
 import { BaseCalendarService } from "../BaseCalendarService";
-import { ICalendarEvent } from "../ICalendarEvent";
+import { IFeedEvent } from "../IFeedEvent";
 import Parser from 'rss-parser';
 
 export class RSSCalendarService extends BaseCalendarService implements ICalendarService {
@@ -17,15 +17,15 @@ export class RSSCalendarService extends BaseCalendarService implements ICalendar
     this.Name = "RSS";
   }
 
-  public getEvents = (): Promise<ICalendarEvent[]> => {
+  public getEvents = (): Promise<IFeedEvent[]> => {
     const parameterizedFeedUrl: string = this.getCORSUrl(this.replaceTokens(this.FeedUrl, this.EventRange));
 
     let parser = new Parser();
     return parser.parseURL(parameterizedFeedUrl).then(feed => {
 
-      let events: ICalendarEvent[] = feed.items.map(item => {
+      let events: IFeedEvent[] = feed.items.map(item => {
         let pubDate: Date = this.convertToDate(item.isoDate);
-        const eventItem: ICalendarEvent = {
+        const eventItem: IFeedEvent = {
           title: item.title,
           start: pubDate,
           end: pubDate,

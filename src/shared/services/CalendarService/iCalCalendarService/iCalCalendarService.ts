@@ -4,7 +4,7 @@
 import * as ICAL from "ical.js";
 import { ICalendarService } from "..";
 import { BaseCalendarService } from "../BaseCalendarService";
-import { ICalendarEvent } from "../ICalendarEvent";
+import { IFeedEvent } from "../IFeedEvent";
 
 // tslint:disable-next-line:class-name
 export class iCalCalendarService extends BaseCalendarService implements ICalendarService {
@@ -13,7 +13,7 @@ export class iCalCalendarService extends BaseCalendarService implements ICalenda
     this.Name = "iCal";
   }
 
-  public getEvents = async (): Promise<ICalendarEvent[]> => {
+  public getEvents = async (): Promise<IFeedEvent[]> => {
     const parameterizedFeedUrl: string = this.replaceTokens(this.FeedUrl, this.EventRange);
 
     try {
@@ -23,12 +23,12 @@ export class iCalCalendarService extends BaseCalendarService implements ICalenda
       const comp: any = new ICAL.Component(jsonified);
       const veventList: any[] = comp.getAllSubcomponents("vevent");
 
-      let events: ICalendarEvent[] = veventList.map((vevent: any) => {
+      let events: IFeedEvent[] = veventList.map((vevent: any) => {
         const event: ICAL.Event = new ICAL.Event(vevent);
         let startDate = this.convertToDate(event.startDate);
         let endDate = this.convertToDate(event.endDate);
 
-        const eventItem: ICalendarEvent = {
+        const eventItem: IFeedEvent = {
           title: event.summary,
           start: startDate,
           end: endDate,

@@ -7,8 +7,9 @@
  */
 import { DisplayMode } from "@microsoft/sp-core-library";
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import { ICalendarEvent, ICalendarService } from "../../../shared/services/CalendarService";
+import { IFeedEvent, ICalendarService } from "../../../shared/services/CalendarService";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { IFeedCache } from "../../../shared/types";
 
 /**
  * The props for the calendar feed component
@@ -28,7 +29,21 @@ export interface ICalendarFeedProps {
  * The state for the calendar feed component
  */
 export interface ICalendarFeedState {
+  providers: ICalendarProvider[];
   events: ICalendarEvent[];
   error: any|undefined;
   isLoading: boolean;
+}
+
+export interface ICalendarProvider extends ICalendarService {
+  visible: boolean;
+}
+
+export interface ICalendarEvent extends IFeedEvent {
+  provider: string;
+  visible: boolean;
+}
+
+export interface ICalendarFeedCache extends IFeedCache {
+  events: ICalendarEvent[];
 }

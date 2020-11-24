@@ -1,9 +1,9 @@
-import { ICalendarEvent } from "../../services/CalendarService";
+import { IFeedEvent } from "../../services/CalendarService";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface IEventCardProps {
     isEditMode: boolean;
-    event: ICalendarEvent;
+    event: IFeedEvent;
     isNarrow: boolean;
     themeVariant?: IReadonlyTheme;
 }

@@ -5,7 +5,11 @@
 This solution contains 2 web parts which use event feeds from various sources.
 
 - Event Feed Summary
+  > This web part displays a Film Strip view of the events from a single Feed Provider.
 - Event Feed Calendar
+  > This web part displays a Calendar using react-big-calendar.
+  >
+  > It supports multiple Feed Providers, and allows toggling visibility of individual Feeds when configured with multiple providers.
 
 It supports the following types of feeds:
 
@@ -18,8 +22,6 @@ It supports the following types of feeds:
 The solution was designed to allow other calendar feed types (or any other type of data you'd like to show as events). If you have additional feeds that you'd like to support, please contact the author or submit a pull request.
 
 To improve performance, the web part caches the events to the user's local storage (so that it doesn't retrieve the events every time the user visits the page). You can turn off the cache by setting the cache duration to 0 minutes.
-
-For more information about how this solution was built, including some design decisions and information on how you can extend this example to allow additional event feed provider, visit the original calendar-feed-summary author's blog: https://tahoeninjas.blog/creating-a-calendar-feed-web-part.
 
 ## Origins
 
@@ -58,12 +60,6 @@ react-calendar-feed | Hugo Bernier ([Tahoe Ninjas](http://tahoeninjas.blog), @be
 react-calendar-feed | Peter Paul Kirschner ([@petkir_at](https://twitter.com/petkir_at))
 spdevfx-calendar-feed | Anthony Munro
 
-## Version history
-
-Version|Date|Comments
--------|----|--------
-1.0|October 13, 2020|Initial release
-
 ## Disclaimer
 
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
@@ -85,21 +81,6 @@ Version|Date|Comments
 - If necessary, specify to use a proxy. Use this option if you encounter issues where your feed provider does not accept your tenant URL as a CORS origin.
 - If desired, specify how long (in minutes) you want to expire your users' local storage and refresh the events.
 - Exclude IE11 support with gulp parameter ```--NoIE11``` this is in-case-sensitive 
-
-## Features
-
-This Web Part illustrates the following concepts on top of the SharePoint Framework:
-
-- Rendering different views based on size
-- Loading third-party CSS from a CDN
-- Excluding mock data from production build
-- Using @pnp/spfx-property-controls
-- Using @pnp/spfx-controls-react
-- Using localStorage to cache results locally
-- Creating shared components and services
-- Creating extensible services
-- Using a proxy to resolve CORS issues
-- Retrieving SharePoint events from a list with a filter
 
 
 ## Fixing ical.js issue

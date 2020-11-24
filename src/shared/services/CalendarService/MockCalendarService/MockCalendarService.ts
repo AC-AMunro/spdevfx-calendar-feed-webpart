@@ -5,10 +5,10 @@
  */
 import moment from "moment";
 import { BaseCalendarService } from "../BaseCalendarService";
-import { ICalendarEvent } from "../ICalendarEvent";
+import { IFeedEvent } from "../IFeedEvent";
 import { ICalendarService } from "../ICalendarService";
 
-const sampleEvents: ICalendarEvent[] = [
+const sampleEvents: IFeedEvent[] = [
   {
     title: "This event has a paragraph description",
     start: moment().add(1, "d").toDate(),
@@ -167,8 +167,8 @@ export class MockCalendarService extends BaseCalendarService implements ICalenda
     this.Name = "Mock";
   }
 
-  public getEvents = (): Promise<ICalendarEvent[]> => {
-    return new Promise<ICalendarEvent[]>((resolve: any) => {
+  public getEvents = (): Promise<IFeedEvent[]> => {
+    return new Promise<IFeedEvent[]>((resolve: any) => {
       setTimeout(() => {
         resolve(this.filterEventRange(sampleEvents));
       }, 100);

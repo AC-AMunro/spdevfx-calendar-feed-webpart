@@ -7,7 +7,7 @@
  */
 import { DisplayMode } from "@microsoft/sp-core-library";
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import { ICalendarEvent, ICalendarService } from "../../../shared/services/CalendarService";
+import { IFeedEvent, ICalendarService } from "../../../shared/services/CalendarService";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 /**
@@ -29,7 +29,7 @@ export interface ICalendarFeedSummaryProps {
  * The state for the calendar feed summary component
  */
 export interface ICalendarFeedSummaryState {
-  events: ICalendarEvent[];
+  events: IFeedEvent[];
   error: any|undefined;
   isLoading: boolean;
   currentPage: number;
