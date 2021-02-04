@@ -106,7 +106,7 @@ export abstract class BaseCalendarService implements ICalendarService {
   protected getCORSUrl(feedUrl: string): string {
     // would love to use a different approach to workaround CORS issues
     return this.UseCORS ?
-      `https://cors-anywhere.herokuapp.com/${feedUrl}` :
+      `http://cors-anywhere.avcol.school.nz:8080/${feedUrl}` :
       feedUrl;
   }
 
